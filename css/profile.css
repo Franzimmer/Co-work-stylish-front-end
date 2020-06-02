@@ -1,0 +1,42 @@
+@import "common.css";
+/* main */
+main{
+	padding:20px 10px;padding-top:100px;padding-bottom:400px;text-align:center;
+}
+main>.view{
+	max-width:600px;
+}
+@media (max-width:600px){
+	main{
+		padding-top:50px;padding-bottom:300px;
+	}
+}
+/* .headline */
+main>.view>.headline{
+	padding-bottom:15px;border-bottom:1px solid #979797;
+}
+/* .profile */
+main>.view>.profile{
+	display:flex;align-items:center;margin-top:40px;
+}
+main>.view>.profile>.picture{
+	flex:none;width:200px;margin-left:50px;margin-right:10px;
+}
+main>.view>.profile>.picture>img{
+	width:100%;
+}
+main>.view>.profile>.details{
+	flex:auto;line-height:2em;font-size:1.2em;
+	overflow-x:hidden;white-space:nowrap;
+}
+@media (max-width:600px){
+	main>.view>.profile{
+		flex-wrap:wrap;justify-content:center;margin-top:20px;
+	}
+	main>.view>.profile>.picture{
+		margin:0px;
+	}
+	main>.view>.profile>.details{
+		flex:none;width:100%;margin-top:20px;
+	}
+}

@@ -1,0 +1,25 @@
+@import "common.css";
+/* main */
+main{
+	padding:20px 10px;padding-top:100px;padding-bottom:400px;text-align:center;
+}
+@media (max-width:600px){
+	main{
+		padding-top:50px;padding-bottom:300px;
+	}
+}
+main>.view{
+	max-width:980px;
+}
+main>.view>.headline{
+	padding-bottom:15px;border-bottom:1px solid #979797;
+}
+main>.view #number{
+	background-color:#eeeeee;padding:5px 10px;
+}
+main>.view>.more{
+	margin-top:40px;
+}
+main>.view>.more>a:hover{
+	color:#8b572a;
+}
