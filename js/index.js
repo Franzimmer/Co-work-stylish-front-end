@@ -25,7 +25,7 @@ app.init=function(){
 	};
 // keyvisuals
 app.getKeyvisuals=function(){
-	app.ajax("get", app.cst.API_HOST+"/marketing/campaigns", "", {}, function(req){
+	app.ajax("get", app.cst.API_ENDPOINT+"/marketing/campaigns", "", {}, function(req){
 		app.state.keyvisual=JSON.parse(req.responseText);
 		app.state.keyvisual.step=0;
 		app.state.keyvisual.total=app.state.keyvisual.data.length;
@@ -48,7 +48,7 @@ app.showKeyvisual=function(keyvisual){
 		let visual=app.createElement("a", {atrs:{
 			className:"visual"+(index===0?" current":""), href:"./product.html?id="+item.product_id
 		}, stys:{
-			backgroundImage:"url("+item.picture+")"
+			backgroundImage:"url("+app.cst.API_HOST+item.picture+")"
 		}});
 		app.createElement("div", {atrs:{
 			className:"story", innerHTML:item.story.replace(/\r\n/g, "<br/>")
@@ -94,7 +94,7 @@ app.getProducts=function(tag, paging){
 		keyword=tag;
 	}
 	app.state.product=null;
-	app.ajax("get", app.cst.API_HOST+"/products"+path, "paging="+paging+(keyword?"&keyword="+encodeURIComponent(tag):""), {}, function(req){
+	app.ajax("get", app.cst.API_ENDPOINT+"/products"+path, "paging="+paging+(keyword?"&keyword="+encodeURIComponent(tag):""), {}, function(req){
 		app.state.product=JSON.parse(req.responseText);
 		app.showProducts(app.state.product.data);
 	});

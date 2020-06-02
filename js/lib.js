@@ -5,7 +5,8 @@ let app={
 		cart:null, auth:null
 	}, evts:{}, cart:{},
 	cst:{
-		API_HOST:"https://api.appworks-school.tw/api/1.0"
+		API_HOST:"https://api.appworks-school.tw",
+		API_ENDPOINT:"https://api.appworks-school.tw/api/1.0"
 	}
 };
 // core operations
@@ -167,7 +168,7 @@ app.fb.updateLoginToServer=function(){
 		provider:"facebook",
 		access_token:app.state.auth.accessToken
 	}
-	app.ajax("post", app.cst.API_HOST+"/user/signin", data, {}, function(req){});
+	app.ajax("post", app.cst.API_ENDPOINT+"/user/signin", data, {}, function(req){});
 };
 app.fb.clickProfile=function(){
 	if(app.state.auth===null){

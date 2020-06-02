@@ -16,7 +16,7 @@ app.init=function(){
 	});
 };
 app.getProduct=function(id){
-	app.ajax("get", app.cst.API_HOST+"/products/details", "id="+id, {}, function(req){
+	app.ajax("get", app.cst.API_ENDPOINT+"/products/details", "id="+id, {}, function(req){
 		let data=JSON.parse(req.responseText).data;
 		let variant;
 		// find first chosen variant available

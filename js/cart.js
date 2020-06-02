@@ -74,7 +74,7 @@ app.checkout=function(prime){
 		headers["Authorization"]="Bearer "+app.state.auth.accessToken;
 	}
 	app.showLoading();
-	app.ajax("post", app.cst.API_HOST+"/order/checkout", data, headers, function(req){
+	app.ajax("post", app.cst.API_ENDPOINT+"/order/checkout", data, headers, function(req){
 		app.closeLoading();
 		let result=JSON.parse(req.responseText);
 		if(result.error){
