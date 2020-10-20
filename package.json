@@ -17,6 +17,16 @@
   },
   "homepage": "https://github.com/AppWorks-School/Stylish-Front-End-2021#readme",
   "devDependencies": {
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.2",
     "prettier": "2.1.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md,html}": "prettier --write"
   }
 }
