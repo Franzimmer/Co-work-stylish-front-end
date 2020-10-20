@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/AppWorks-School/Stylish-Front-End-2021/issues"
   },
-  "homepage": "https://github.com/AppWorks-School/Stylish-Front-End-2021#readme"
+  "homepage": "https://github.com/AppWorks-School/Stylish-Front-End-2021#readme",
+  "devDependencies": {
+    "prettier": "2.1.2"
+  }
 }
