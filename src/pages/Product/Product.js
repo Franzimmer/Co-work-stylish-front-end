@@ -1,11 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import CartContext from '../../contexts/CartContext';
 
 import api from '../../utils/api';
-import getStock from './getStock';
-import Variants from './Variants';
+import ProductVariants from './ProductVariants';
 
 const Wrapper = styled.div`
   max-width: 960px;
@@ -77,26 +75,6 @@ const Price = styled.div`
     margin-top: 20px;
     font-size: 20px;
     padding-bottom: 10px;
-  }
-`;
-
-const AddToCart = styled.button`
-  width: 100%;
-  height: 60px;
-  margin-top: 29px;
-  border: solid 1px #979797;
-  background-color: black;
-  font-size: 20px;
-  letter-spacing: 4px;
-  color: white;
-  cursor: pointer;
-
-  @media screen and (max-width: 1279px) {
-    height: 44px;
-    margin-top: 10px;
-    font-size: 16px;
-    letter-spacing: 3.2px;
-    color: white;
   }
 `;
 
@@ -214,59 +192,17 @@ const Image = styled.img`
 
 function Product() {
   const [product, setProduct] = useState();
-  const [selectedColorCode, setSelectedColorCode] = useState();
-  const [selectedSize, setSelectedSize] = useState();
-  const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
-  const cart = useContext(CartContext);
 
   useEffect(() => {
     async function getProduct() {
-      const { data } = await api.getProduct(id);
-      setSelectedColorCode(data.colors[0].code);
-      setProduct(data);
+      const product = await api.getProduct(id);
+      setProduct(product);
     }
     getProduct();
   }, [id]);
 
   if (!product) return null;
-
-  function addToCart() {
-    if (!selectedSize) {
-      window.alert('請選擇尺寸');
-      return;
-    }
-
-    cart.addItem({
-      color: product.colors.find((color) => color.code === selectedColorCode),
-      id: product.id,
-      image: product.main_image,
-      name: product.title,
-      price: product.price,
-      qty: quantity,
-      size: selectedSize,
-      stock: getStock(product.variants, selectedColorCode, selectedSize),
-    });
-  }
-
-  function handleColorCodeChange(colorCode) {
-    setSelectedColorCode(colorCode);
-    setSelectedSize();
-    setQuantity(1);
-  }
-
-  function handleSizeChange(size) {
-    const stock = getStock(product.variants, selectedColorCode, size);
-    if (stock === 0) return;
-    setSelectedSize(size);
-    if (stock < quantity) setQuantity(1);
-  }
-
-  function handleQuantityChange(quantity) {
-    const stock = getStock(product.variants, selectedColorCode, selectedSize);
-    if (!selectedSize || quantity < 1 || quantity > stock) return;
-    setQuantity(quantity);
-  }
 
   return (
     <Wrapper>
@@ -275,20 +211,7 @@ function Product() {
         <Title>{product.title}</Title>
         <ID>{product.id}</ID>
         <Price>TWD.{product.price}</Price>
-        <Variants
-          colors={product.colors}
-          sizes={product.sizes}
-          variants={product.variants}
-          selectedColorCode={selectedColorCode}
-          selectedSize={selectedSize}
-          quantity={quantity}
-          onColorCodeChange={handleColorCodeChange}
-          onSizeChange={handleSizeChange}
-          onQuantityChange={handleQuantityChange}
-        />
-        <AddToCart onClick={addToCart}>
-          {selectedSize ? '加入購物車' : '請選擇尺寸'}
-        </AddToCart>
+        <ProductVariants product={product} />
         <Note>{product.note}</Note>
         <Texture>{product.texture}</Texture>
         <Description>{product.description}</Description>

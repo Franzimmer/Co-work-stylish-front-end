@@ -1,7 +1,9 @@
 const api = {
   hostname: 'https://api.appworks-school.tw/api/1.0',
   async getProducts(category, paging) {
-    const response = await fetch(`${this.hostname}/products/${category}?paging=${paging}`);
+    const response = await fetch(
+      `${this.hostname}/products/${category}?paging=${paging}`
+    );
     return await response.json();
   },
   async getCampaigns() {
@@ -16,7 +18,8 @@ const api = {
   },
   async getProduct(id) {
     const response = await fetch(`${this.hostname}/products/details?id=${id}`);
-    return await response.json();
+    const json = await response.json();
+    return json.data;
   },
   async checkout(data, jwtToken) {
     const response = await fetch(`${this.hostname}/order/checkout`, {

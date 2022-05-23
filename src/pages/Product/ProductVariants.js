@@ -1,8 +1,9 @@
+import { useContext, useState } from 'react';
 import styled from 'styled-components';
 
-import getStock from './getStock';
 import add from './add.png';
 import minus from './minus.png';
+import CartContext from '../../contexts/CartContext';
 
 const Option = styled.div`
   display: flex;
@@ -97,40 +98,89 @@ const IncrementButton = styled(Button)`
   background-image: url(${add});
 `;
 
-function Variants({
-  colors,
-  sizes,
-  variants,
-  selectedColorCode,
-  selectedSize,
-  quantity,
-  onColorCodeChange,
-  onSizeChange,
-  onQuantityChange,
-}) {
+const AddToCart = styled.button`
+  width: 100%;
+  height: 60px;
+  margin-top: 29px;
+  border: solid 1px #979797;
+  background-color: black;
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: white;
+  cursor: pointer;
+
+  @media screen and (max-width: 1279px) {
+    height: 44px;
+    margin-top: 10px;
+    font-size: 16px;
+    letter-spacing: 3.2px;
+    color: white;
+  }
+`;
+
+function ProductVariants({ product }) {
+  const [selectedColorCode, setSelectedColorCode] = useState(
+    product.colors[0].code
+  );
+  const [selectedSize, setSelectedSize] = useState();
+  const [quantity, setQuantity] = useState(1);
+  const cart = useContext(CartContext);
+
+  function getStock(colorCode, size) {
+    return product.variants.find(
+      (variant) => variant.color_code === colorCode && variant.size === size
+    ).stock;
+  }
+
+  function addToCart() {
+    if (!selectedSize) {
+      window.alert('請選擇尺寸');
+      return;
+    }
+
+    cart.addItem({
+      color: product.colors.find((color) => color.code === selectedColorCode),
+      id: product.id,
+      image: product.main_image,
+      name: product.title,
+      price: product.price,
+      qty: quantity,
+      size: selectedSize,
+      stock: getStock(selectedColorCode, selectedSize),
+    });
+  }
   return (
     <>
       <Option>
         <OptionName>顏色｜</OptionName>
-        {colors.map((color) => (
+        {product.colors.map((color) => (
           <Color
             key={color.code}
             $isSelected={color.code === selectedColorCode}
             $colorCode={`#${color.code}`}
-            onClick={() => onColorCodeChange(color.code)}
+            onClick={() => {
+              setSelectedColorCode(color.code);
+              setSelectedSize();
+              setQuantity(1);
+            }}
           />
         ))}
       </Option>
       <Option>
         <OptionName>尺寸｜</OptionName>
-        {sizes.map((size) => {
-          const stock = getStock(variants, selectedColorCode, size);
+        {product.sizes.map((size) => {
+          const stock = getStock(selectedColorCode, size);
           return (
             <Size
               key={size}
               $isSelected={size === selectedSize}
               $isDisabled={stock === 0}
-              onClick={() => onSizeChange(size)}
+              onClick={() => {
+                const stock = getStock(selectedColorCode, size);
+                if (stock === 0) return;
+                setSelectedSize(size);
+                if (stock < quantity) setQuantity(1);
+              }}
             >
               {size}
             </Size>
@@ -140,13 +190,27 @@ function Variants({
       <Option>
         <OptionName hideOnMobile>數量｜</OptionName>
         <QuantitySelector>
-          <DecrementButton onClick={() => onQuantityChange(quantity - 1)} />
+          <DecrementButton
+            onClick={() => {
+              if (!selectedSize || quantity === 1) return;
+              setQuantity(quantity - 1);
+            }}
+          />
           <Quantity>{quantity}</Quantity>
-          <IncrementButton onClick={() => onQuantityChange(quantity + 1)} />
+          <IncrementButton
+            onClick={() => {
+              const stock = getStock(selectedColorCode, selectedSize);
+              if (!selectedSize || quantity === stock) return;
+              setQuantity(quantity + 1);
+            }}
+          />
         </QuantitySelector>
       </Option>
+      <AddToCart onClick={addToCart}>
+        {selectedSize ? '加入購物車' : '請選擇尺寸'}
+      </AddToCart>
     </>
   );
 }
 
-export default Variants;
+export default ProductVariants;
