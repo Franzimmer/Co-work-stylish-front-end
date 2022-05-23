@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -8,6 +8,7 @@ import cart from './cart.png';
 import cartMobile from './cart-mobile.png';
 import profile from './profile.png';
 import profileMobile from './profile-mobile.png';
+import CartContext from '../../contexts/CartContext';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -242,6 +243,7 @@ function Header() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
+  const { items } = useContext(CartContext);
 
   return (
     <Wrapper>
@@ -269,9 +271,7 @@ function Header() {
       <PageLinks>
         <PageLink to="/cart">
           <PageLinkCartIcon icon={cart}>
-            <PageLinkIconNumber>
-              {/* {props.cartItems.length} */}
-            </PageLinkIconNumber>
+            <PageLinkIconNumber>{items.length}</PageLinkIconNumber>
           </PageLinkCartIcon>
           <PageLinkText>購物車</PageLinkText>
         </PageLink>

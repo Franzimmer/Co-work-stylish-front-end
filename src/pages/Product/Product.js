@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import CartContext from '../../contexts/CartContext';
 
 import api from '../../utils/api';
 import getStock from './getStock';
@@ -217,6 +218,7 @@ function Product() {
   const [selectedSize, setSelectedSize] = useState();
   const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
+  const cart = useContext(CartContext);
 
   useEffect(() => {
     async function getProduct() {
@@ -234,22 +236,17 @@ function Product() {
       window.alert('請選擇尺寸');
       return;
     }
-    const newCartItems = [
-      ...props.cartItems,
-      {
-        color: product.colors.find((color) => color.code === selectedColorCode),
-        id: product.id,
-        image: product.main_image,
-        name: product.title,
-        price: product.price,
-        qty: quantity,
-        size: selectedSize,
-        stock: getStock(product.variants, selectedColorCode, selectedSize),
-      },
-    ];
-    window.localStorage.setItem('cart', JSON.stringify(newCartItems));
-    props.setCartItems(newCartItems);
-    window.alert('已加入購物車');
+
+    cart.addItem({
+      color: product.colors.find((color) => color.code === selectedColorCode),
+      id: product.id,
+      image: product.main_image,
+      name: product.title,
+      price: product.price,
+      qty: quantity,
+      size: selectedSize,
+      stock: getStock(product.variants, selectedColorCode, selectedSize),
+    });
   }
 
   function handleColorCodeChange(colorCode) {

@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
+import CartContext from './contexts/CartContext';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -50,13 +52,52 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
+  const [cartItems, setCartItems] = useState(
+    JSON.parse(window.localStorage.getItem('cartItems')) || []
+  );
+
+  function addItem(item) {
+    const newCartItems = [...cartItems, item];
+    setCartItems(newCartItems);
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    window.alert('已加入商品');
+  }
+
+  function changeItemQuantity(itemIndex, itemQuantity) {
+    const newCartItems = cartItems.map((item, index) =>
+      index === itemIndex
+        ? {
+            ...item,
+            qty: itemQuantity,
+          }
+        : item
+    );
+    setCartItems(newCartItems);
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    window.alert('已修改數量');
+  }
+
+  function deleteItem(itemIndex) {
+    const newCartItems = cartItems.filter((_, index) => index !== itemIndex);
+    setCartItems(newCartItems);
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    window.alert('已刪除商品');
+  }
+
+  const cart = {
+    items: cartItems,
+    addItem,
+    changeItemQuantity,
+    deleteItem,
+  };
+
   return (
-    <>
+    <CartContext.Provider value={cart}>
       <GlobalStyle />
       <Header />
       <Outlet />
       <Footer />
-    </>
+    </CartContext.Provider>
   );
 }
 
