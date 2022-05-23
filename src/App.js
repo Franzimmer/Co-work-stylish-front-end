@@ -56,6 +56,10 @@ function App() {
     JSON.parse(window.localStorage.getItem('cartItems')) || []
   );
 
+  function getItems() {
+    return cartItems;
+  }
+
   function addItem(item) {
     const newCartItems = [...cartItems, item];
     setCartItems(newCartItems);
@@ -84,11 +88,16 @@ function App() {
     window.alert('已刪除商品');
   }
 
+  function clearItems() {
+    setCartItems([]);
+  }
+
   const cart = {
-    items: cartItems,
+    getItems,
     addItem,
     changeItemQuantity,
     deleteItem,
+    clearItems,
   };
 
   return (

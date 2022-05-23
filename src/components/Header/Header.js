@@ -243,7 +243,7 @@ function Header() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
-  const { items } = useContext(CartContext);
+  const { getItems } = useContext(CartContext);
 
   return (
     <Wrapper>
@@ -271,7 +271,7 @@ function Header() {
       <PageLinks>
         <PageLink to="/cart">
           <PageLinkCartIcon icon={cart}>
-            <PageLinkIconNumber>{items.length}</PageLinkIconNumber>
+            <PageLinkIconNumber>{getItems().length}</PageLinkIconNumber>
           </PageLinkCartIcon>
           <PageLinkText>購物車</PageLinkText>
         </PageLink>
