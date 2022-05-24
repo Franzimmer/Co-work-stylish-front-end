@@ -212,6 +212,7 @@ const PageLinkIconNumber = styled.div`
   color: white;
   border-radius: 50%;
   text-align: center;
+  line-height: 24px;
 `;
 
 const PageLinkText = styled.div`
@@ -269,7 +270,7 @@ function Header() {
         value={inputValue}
       />
       <PageLinks>
-        <PageLink to="/cart">
+        <PageLink to="/checkout">
           <PageLinkCartIcon icon={cart}>
             <PageLinkIconNumber>{getItems().length}</PageLinkIconNumber>
           </PageLinkCartIcon>

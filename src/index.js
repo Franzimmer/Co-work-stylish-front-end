@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import App from './App';
+import Checkout from './pages/Checkout/Checkout';
 import Home from './pages/Home/Home';
 import Product from './pages/Product/Product';
 
@@ -13,8 +14,8 @@ root.render(
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="products/:id" element={<Product />} />
-        {/* <Route path="cart" element={<Cart />} />
-        <Route path="profile" element={<Profile />} /> */}
+        <Route path="checkout" element={<Checkout />} />
+        {/* <Route path="profile" element={<Profile />} /> */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

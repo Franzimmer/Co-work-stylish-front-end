@@ -33,7 +33,7 @@ const tappay = {
     });
   },
   canGetPrime() {
-    return window.TPDirect.card.getTappayFieldsStatus().canGetPrim;
+    return window.TPDirect.card.getTappayFieldsStatus().canGetPrime;
   },
   getPrime() {
     return new Promise((resolve) => {
