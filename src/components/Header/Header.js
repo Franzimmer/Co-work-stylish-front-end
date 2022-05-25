@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -246,6 +246,10 @@ function Header() {
   const category = searchParams.get('category');
   const { getItems } = useContext(CartContext);
 
+  useEffect(() => {
+    if (category) setInputValue('');
+  }, [category]);
+
   return (
     <Wrapper>
       <Logo to="/" />
@@ -263,7 +267,7 @@ function Header() {
       <SearchInput
         onKeyPress={(e) => {
           if (e.key === 'Enter') {
-            navigate(`/?q=${inputValue}`);
+            navigate(`/?keyword=${inputValue}`);
           }
         }}
         onChange={(e) => setInputValue(e.target.value)}
