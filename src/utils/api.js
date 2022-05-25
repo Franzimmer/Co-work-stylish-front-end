@@ -18,8 +18,7 @@ const api = {
   },
   async getProduct(id) {
     const response = await fetch(`${this.hostname}/products/details?id=${id}`);
-    const json = await response.json();
-    return json.data;
+    return await response.json();
   },
   async checkout(data, jwtToken) {
     const response = await fetch(`${this.hostname}/order/checkout`, {
@@ -49,8 +48,7 @@ const api = {
         Authorization: `Bearer ${jwtToken}`,
       }),
     });
-    const json = await response.json();
-    return json.data;
+    return await response.json();
   },
 };
 

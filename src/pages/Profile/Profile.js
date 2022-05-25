@@ -48,8 +48,8 @@ function Profile() {
       }
       window.localStorage.setItem('jwtToken', jwtToken);
 
-      const profile = await api.getProfile(jwtToken);
-      setProfile(profile);
+      const { data } = await api.getProfile(jwtToken);
+      setProfile(data);
     }
     getProfile();
   }, []);

@@ -196,8 +196,8 @@ function Product() {
 
   useEffect(() => {
     async function getProduct() {
-      const product = await api.getProduct(id);
-      setProduct(product);
+      const { data } = await api.getProduct(id);
+      setProduct(data);
     }
     getProduct();
   }, [id]);
