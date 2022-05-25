@@ -339,12 +339,14 @@ function Checkout() {
     let jwtToken = window.localStorage.getItem('jwtToken');
 
     if (!jwtToken) {
-      window.alert('請先登入');
-      jwtToken = await getJwtToken();
-      window.localStorage.setItem('jwtToken', jwtToken);
-      checkout();
-      return;
+      try {
+        jwtToken = await getJwtToken();
+      } catch (e) {
+        window.alert(e.message);
+        return;
+      }
     }
+    window.localStorage.setItem('jwtToken', jwtToken);
 
     if (items.length === 0) {
       window.alert('尚未選購商品');

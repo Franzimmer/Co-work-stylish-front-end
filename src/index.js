@@ -7,8 +7,10 @@ import Checkout from './pages/Checkout/Checkout';
 import Home from './pages/Home/Home';
 import ThankYou from './pages/ThankYou/ThankYou';
 import Product from './pages/Product/Product';
+import Profile from './pages/Profile/Profile';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <BrowserRouter>
     <Routes>
@@ -17,7 +19,7 @@ root.render(
         <Route path="products/:id" element={<Product />} />
         <Route path="checkout" element={<Checkout />} />
         <Route path="thankyou" element={<ThankYou />} />
-        {/* <Route path="profile" element={<Profile />} /> */}
+        <Route path="profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

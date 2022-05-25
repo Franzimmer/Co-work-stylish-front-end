@@ -49,7 +49,8 @@ const api = {
         Authorization: `Bearer ${jwtToken}`,
       }),
     });
-    return await response.json();
+    const json = await response.json();
+    return json.data;
   },
 };
 
