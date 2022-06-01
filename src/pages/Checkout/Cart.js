@@ -101,6 +101,8 @@ const ItemDetails = styled.div`
   }
 `;
 
+const ItemName = styled.div``;
+
 const ItemID = styled.div`
   margin-top: 18px;
 `;
@@ -226,7 +228,7 @@ function Cart() {
           <Item key={`${item.id}-${item.color.code}-${item.size}`}>
             <ItemImage src={item.image} />
             <ItemDetails>
-              <div>{item.name}</div>
+              <ItemName>{item.name}</ItemName>
               <ItemID>{item.id}</ItemID>
               <ItemColorName>顏色｜{item.color.name}</ItemColorName>
               <ItemSize>尺寸｜{item.size}</ItemSize>
