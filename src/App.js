@@ -6,29 +6,33 @@ import { Reset } from 'styled-reset';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import CartContext from './contexts/CartContext';
+import PingFangTCRegular from './fonts/PingFang-TC-Regular-2.otf';
+import PingFangTCThin from './fonts/PingFang-TC-Thin-2.otf';
+import NotoSansTCRegular from './fonts/NotoSansTC-Regular.otf';
+import NotoSansTCBold from './fonts/NotoSansTC-Bold.otf';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: PingFangTC;
-    src: url('/PingFang-TC-Regular-2.otf') format('opentype');
+    src: url(${PingFangTCRegular}) format('opentype');
     font-weight: normal;
   }
 
   @font-face {
     font-family: PingFangTC;
-    src: url('/PingFang-TC-Thin-2.otf') format('opentype');
+    src: url(${PingFangTCThin}) format('opentype');
     font-weight: 100;
   }
 
   @font-face {
     font-family: NotoSansTC;
-    src: url('/NotoSansTC-Regular.otf') format('opentype');
+    src: url(${NotoSansTCRegular}) format('opentype');
     font-weight: normal;
   }
 
   @font-face {
     font-family: NotoSansTC;
-    src: url('/NotoSansTC-Bold.otf') format('opentype');
+    src: url(${NotoSansTCBold}) format('opentype');
     font-weight: bold;
   }
 
