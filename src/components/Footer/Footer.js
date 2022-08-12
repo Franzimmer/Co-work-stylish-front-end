@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   width: 100%;
   background-color: #313538;
   font-family: PingFangTC;
+  z-index: 4;
 
   @media screen and (max-width: 1279px) {
     bottom: 60px;
@@ -127,11 +128,9 @@ function Footer() {
     <Wrapper>
       <Content>
         <SiteLinks>
-          {['關於 Stylish', '服務條款', '隱私政策', '聯絡我們', 'FAQ'].map(
-            (text, index) => (
-              <SiteLink key={index}>{text}</SiteLink>
-            )
-          )}
+          {['關於 Stylish', '服務條款', '隱私政策', '聯絡我們', 'FAQ'].map((text, index) => (
+            <SiteLink key={index}>{text}</SiteLink>
+          ))}
         </SiteLinks>
         <SocialLinks>
           {[line, twitter, facebook].map((icon, index) => (

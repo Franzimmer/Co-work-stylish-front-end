@@ -9,6 +9,8 @@ import cartMobile from './cart-mobile.png';
 import profile from './profile.png';
 import profileMobile from './profile-mobile.png';
 import CartContext from '../../contexts/CartContext';
+import track from './track.png';
+import bell from './bell.png';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -33,19 +35,22 @@ const Wrapper = styled.div`
 `;
 
 const Logo = styled(Link)`
-  width: 258px;
+  width: 230px;
   height: 48px;
+  margin-top: 10px;
   background-image: url(${logo});
   background-size: contain;
+  background-repeat: no-repeat;
 
   @media screen and (max-width: 1279px) {
     width: 129px;
     height: 24px;
+    margin-top: 0px;
   }
 `;
 
 const CategoryLinks = styled.div`
-  margin: 16px 0 0 57px;
+  margin: 16px 0 0 20px;
 
   @media screen and (max-width: 1279px) {
     margin: 0;
@@ -62,8 +67,8 @@ const CategoryLinks = styled.div`
 const CategoryLink = styled(Link)`
   font-size: 20px;
   letter-spacing: 30px;
-  padding-left: 39px;
-  padding-right: 11px;
+  padding-left: 30px;
+  padding-right: 1px;
   position: relative;
   text-decoration: none;
   color: ${(props) => (props.$isActive ? '#8b572a' : '#3f3a3a')};
@@ -99,21 +104,19 @@ const CategoryLink = styled(Link)`
 `;
 
 const SearchInput = styled.input`
-  height: 40px;
-  width: 214px;
+  width: 200px;
   border: none;
   outline: none;
-  margin-left: auto;
-  border-radius: 20px;
-  padding: 6px 45px 6px 20px;
-  border: solid 1px #979797;
   background-image: url(${search});
-  background-size: 44px;
-  background-position: 160px center;
+  height: 44px;
+  border: solid 1px #979797;
+  color: #8b572a;
+  border-radius: 20px;
   background-repeat: no-repeat;
   font-size: 20px;
   line-height: 24px;
-  color: #8b572a;
+  background-position: 150px;
+  padding: 6px 45px 6px 20px;
 
   @media screen and (max-width: 1279px) {
     width: 0;
@@ -123,7 +126,6 @@ const SearchInput = styled.input`
     background-size: 32px;
     background-position: right center;
   }
-
   &:focus {
     @media screen and (max-width: 1279px) {
       width: calc(100% - 20px);
@@ -132,9 +134,49 @@ const SearchInput = styled.input`
   }
 `;
 
+const TrackIcon = styled.div`
+  margin-right: 35px;
+  background-image: url(${track});
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  background-size: contain;
+  position: relative;
+  @media screen and (max-width: 1279px) {
+    position: fixed;
+    right: 120px;
+  }
+`;
+
+const BellIcon = styled.div`
+  margin-right: 35px;
+  background-image: url(${bell});
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  background-size: contain;
+  position: relative;
+  @media screen and (max-width: 1279px) {
+    position: fixed;
+    right: 50px;
+  }
+`;
+
+const BellIconAlert = styled.div`
+  width: 15px;
+  height: 15px;
+  background: red;
+  position: absolute;
+  border-radius: 50%;
+  bottom: 0px;
+  right: 0px;
+`;
+
 const PageLinks = styled.div`
-  margin-left: 42px;
+  margin-left: auto;
   display: flex;
+  align-item: center;
+  justify-content: center;
 
   @media screen and (max-width: 1279px) {
     width: 100%;
@@ -158,7 +200,8 @@ const PageLink = styled(Link)`
   }
 
   & + & {
-    margin-left: 42px;
+    ${'' /* margin-left: 42px; */}
+    margin-right: 35px;
 
     @media screen and (max-width: 1279px) {
       margin-left: 0;
@@ -172,7 +215,7 @@ const PageLink = styled(Link)`
       left: 0;
       width: 1px;
       height: 24px;
-      margin: 10px 51px 10px 0;
+      ${'' /* margin: 10px 51px 10px 0; */}
       background-color: #828282;
     }
   }
@@ -187,6 +230,7 @@ const PageLinkIcon = styled.div`
 `;
 
 const PageLinkCartIcon = styled(PageLinkIcon)`
+  margin-right: 35px;
   background-image: url(${cart});
 
   @media screen and (max-width: 1279px) {
@@ -239,7 +283,7 @@ const categories = [
   },
 ];
 
-function Header() {
+function Header(props) {
   const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -255,24 +299,11 @@ function Header() {
       <Logo to="/" />
       <CategoryLinks>
         {categories.map(({ name, displayText }, index) => (
-          <CategoryLink
-            to={`/?category=${name}`}
-            $isActive={category === name}
-            key={index}
-          >
+          <CategoryLink to={`/?category=${name}`} $isActive={category === name} key={index}>
             {displayText}
           </CategoryLink>
         ))}
       </CategoryLinks>
-      <SearchInput
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            navigate(`/?keyword=${inputValue}`);
-          }
-        }}
-        onChange={(e) => setInputValue(e.target.value)}
-        value={inputValue}
-      />
       <PageLinks>
         <PageLink to="/checkout">
           <PageLinkCartIcon icon={cart}>
@@ -285,6 +316,19 @@ function Header() {
           <PageLinkText>會員</PageLinkText>
         </PageLink>
       </PageLinks>
+      <TrackIcon icon={track} onClick={() => props.toggle(props.track)} />
+      <BellIcon icon={bell} onClick={() => props.toggleBell(props.bell)}>
+        <BellIconAlert />
+      </BellIcon>
+      <SearchInput
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            navigate(`/?keyword=${inputValue}`);
+          }
+        }}
+        onChange={(e) => setInputValue(e.target.value)}
+        value={inputValue}
+      />
     </Wrapper>
   );
 }

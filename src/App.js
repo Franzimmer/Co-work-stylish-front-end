@@ -56,9 +56,21 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
-  const [cartItems, setCartItems] = useState(
-    JSON.parse(window.localStorage.getItem('cartItems')) || []
-  );
+  //控制追蹤清單開關
+  const [track, setTrack] = useState('block');
+  function toggle(val) {
+    if (val === 'block') setTrack('none');
+    else setTrack('block');
+  }
+
+  //控制推播清單
+  const [bell, setBell] = useState('block');
+  function toggleBell(val) {
+    if (val === 'block') setBell('none');
+    else setBell('block');
+  }
+
+  const [cartItems, setCartItems] = useState(JSON.parse(window.localStorage.getItem('cartItems')) || []);
 
   function getItems() {
     return cartItems;
@@ -110,8 +122,8 @@ function App() {
     <CartContext.Provider value={cart}>
       <Reset />
       <GlobalStyle />
-      <Header />
-      <Outlet />
+      <Header toggle={toggle} toggleBell={toggleBell} track={track} bell={bell} />
+      <Outlet context={{ track, bell }} />
       <Footer />
     </CartContext.Provider>
   );
