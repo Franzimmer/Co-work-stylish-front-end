@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import styled from 'styled-components';
-
-import logo from './logo.png';
-import search from './search.png';
-import cart from './cart.png';
-import cartMobile from './cart-mobile.png';
-import profile from './profile.png';
-import profileMobile from './profile-mobile.png';
-import CartContext from '../../contexts/CartContext';
-import track from './track.png';
-import bell from './bell.png';
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import styled from "styled-components";
+import LogInContext from "../../contexts/LogInContext";
+import logo from "./logo.png";
+import search from "./search.png";
+import cart from "./cart.png";
+import cartMobile from "./cart-mobile.png";
+import profile from "./profile.png";
+import profileMobile from "./profile-mobile.png";
+import CartContext from "../../contexts/CartContext";
+import follow from "./follower.png";
+import bell from "./bell.png";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -71,14 +71,14 @@ const CategoryLink = styled(Link)`
   padding-right: 1px;
   position: relative;
   text-decoration: none;
-  color: ${(props) => (props.$isActive ? '#8b572a' : '#3f3a3a')};
+  color: ${(props) => (props.$isActive ? "#8b572a" : "#3f3a3a")};
 
   @media screen and (max-width: 1279px) {
     font-size: 16px;
     letter-spacing: normal;
     padding: 0;
     text-align: center;
-    color: ${(props) => (props.$isActive ? 'white' : '#828282')};
+    color: ${(props) => (props.$isActive ? "white" : "#828282")};
     line-height: 50px;
     flex-grow: 1;
   }
@@ -92,7 +92,7 @@ const CategoryLink = styled(Link)`
   }
 
   & + &::before {
-    content: '|';
+    content: "|";
     position: absolute;
     left: 0;
     color: #3f3a3a;
@@ -136,7 +136,7 @@ const SearchInput = styled.input`
 
 const TrackIcon = styled.div`
   margin-right: 35px;
-  background-image: url(${track});
+  background-image: url(${follow});
   width: 36px;
   height: 36px;
   cursor: pointer;
@@ -183,6 +183,7 @@ const PageLinks = styled.div`
     margin-left: 0;
     height: 60px;
     position: fixed;
+    z-index: 5;
     left: 0;
     bottom: 0;
     background-color: #313538;
@@ -200,7 +201,7 @@ const PageLink = styled(Link)`
   }
 
   & + & {
-    ${'' /* margin-left: 42px; */}
+    ${"" /* margin-left: 42px; */}
     margin-right: 35px;
 
     @media screen and (max-width: 1279px) {
@@ -210,12 +211,12 @@ const PageLink = styled(Link)`
 
   & + &::before {
     @media screen and (max-width: 1279px) {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       width: 1px;
       height: 24px;
-      ${'' /* margin: 10px 51px 10px 0; */}
+      ${"" /* margin: 10px 51px 10px 0; */}
       background-color: #828282;
     }
   }
@@ -270,28 +271,37 @@ const PageLinkText = styled.div`
 
 const categories = [
   {
-    name: 'women',
-    displayText: '女裝',
+    name: "women",
+    displayText: "女裝",
   },
   {
-    name: 'men',
-    displayText: '男裝',
+    name: "men",
+    displayText: "男裝",
   },
   {
-    name: 'accessories',
-    displayText: '配件',
+    name: "accessories",
+    displayText: "配件",
   },
 ];
 
-function Header(props) {
-  const [inputValue, setInputValue] = useState('');
+function Header({ switchSidebar, setSwitchSidebar }) {
+  const [inputValue, setInputValue] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const category = searchParams.get('category');
+  const category = searchParams.get("category");
   const { getItems } = useContext(CartContext);
+  const { isLoggedIn } = useContext(LogInContext);
+
+  function sidebarToggle(target) {
+    let defaultCondition = { followList: "none", notification: "none" };
+    if (switchSidebar[target] === "none") defaultCondition[target] = "block";
+    else if (switchSidebar[target] === "block")
+      defaultCondition[target] = "none";
+    setSwitchSidebar(defaultCondition);
+  }
 
   useEffect(() => {
-    if (category) setInputValue('');
+    if (category) setInputValue("");
   }, [category]);
 
   return (
@@ -299,7 +309,11 @@ function Header(props) {
       <Logo to="/" />
       <CategoryLinks>
         {categories.map(({ name, displayText }, index) => (
-          <CategoryLink to={`/?category=${name}`} $isActive={category === name} key={index}>
+          <CategoryLink
+            to={`/?category=${name}`}
+            $isActive={category === name}
+            key={index}
+          >
             {displayText}
           </CategoryLink>
         ))}
@@ -316,13 +330,13 @@ function Header(props) {
           <PageLinkText>會員</PageLinkText>
         </PageLink>
       </PageLinks>
-      <TrackIcon icon={track} onClick={() => props.toggle(props.track)} />
-      <BellIcon icon={bell} onClick={() => props.toggleBell(props.bell)}>
-        <BellIconAlert />
+      <TrackIcon icon={follow} onClick={() => sidebarToggle("followList")} />
+      <BellIcon icon={bell} onClick={() => sidebarToggle("notification")}>
+        {isLoggedIn && <BellIconAlert />}
       </BellIcon>
       <SearchInput
         onKeyPress={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === "Enter") {
             navigate(`/?keyword=${inputValue}`);
           }
         }}

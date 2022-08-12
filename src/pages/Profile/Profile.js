@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,8 +6,8 @@ import {
   faLine,
   faGoogle,
 } from "@fortawesome/free-brands-svg-icons";
-import api from "../../utils/api";
 import getJwtToken from "../../utils/getJwtToken";
+import LogInContext from "../../contexts/LogInContext";
 
 const Wrapper = styled.div`
   display: flex;
@@ -36,33 +36,7 @@ const MenuItem = styled.div`
   margin: 0px 0px 20px 40px;
   white-space: nowrap;
 `;
-const FollowList = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 20vw;
-  background-color: #fbf3f2;
-  padding: 20px 0px 0px 20px;
-  height: 100%;
-  overflow: auto;
 
-  @media (max-width: 1279px) {
-    display: none;
-  }
-`;
-const FollowPerson = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 0px 0px 20px 0px;
-  font-sixe: 20px;
-  white-space: nowrap;
-`;
-const FollowPersonPhoto = styled.div`
-  background-color: #ccc;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  margin-right: 20px;
-`;
 const UserMainColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -297,9 +271,10 @@ function Profile() {
   const [profile, setProfile] = useState(
     JSON.parse(window.localStorage.getItem("user"))
   );
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    Boolean(window.localStorage.getItem("jwtToken"))
-  );
+  const logInController = useContext(LogInContext);
+  const logInStatus = logInController.isLoggedIn;
+  const changeLogInStatus = logInController.changeLogInStatus;
+
   async function getProfile() {
     let jwtToken = window.localStorage.getItem("jwtToken");
     let userData;
@@ -313,20 +288,20 @@ function Profile() {
     }
     window.localStorage.setItem("jwtToken", userData.access_token);
     window.localStorage.setItem("user", JSON.stringify(userData.user));
-    setIsLoggedIn(true);
+    changeLogInStatus(true);
     setProfile(userData.user);
   }
 
   return (
     <Wrapper>
-      {isLoggedIn && (
+      {logInStatus && (
         <Menu>
           <MenuItem>- Order</MenuItem>
           <MenuItem>- Coupon</MenuItem>
         </Menu>
       )}
       <UserMainColumn>
-        {!isLoggedIn && (
+        {!logInStatus && (
           <LoginPanel>
             <FbLoginBtn onClick={getProfile}>
               <StyledFontAwesomeIcon icon={faFacebook} />
@@ -342,7 +317,7 @@ function Profile() {
             </GoogleLoginBtn>
           </LoginPanel>
         )}
-        {isLoggedIn && profile && (
+        {logInStatus && profile && (
           <UserWrapper>
             <Photo src={profile.picture} />
             <UserInfoWrapper>
@@ -358,7 +333,7 @@ function Profile() {
               <LogoutButton
                 onClick={() => {
                   window.localStorage.removeItem("jwtToken");
-                  setIsLoggedIn(false);
+                  changeLogInStatus(false);
                 }}
               >
                 登出
@@ -366,34 +341,18 @@ function Profile() {
             </ButtonWrapper>
           </UserWrapper>
         )}
-        {isLoggedIn && (
+        {logInStatus && (
           <DailyTaskReminder>你還未執行每日任務！</DailyTaskReminder>
         )}
-        {isLoggedIn && (
+        {logInStatus && (
           <Tabs>
             <Tab>每日任務</Tab>
             <Tab>貼文</Tab>
             <Tab>心願清單</Tab>
           </Tabs>
         )}
-        {isLoggedIn && <Game></Game>}
+        {logInStatus && <Game></Game>}
       </UserMainColumn>
-      {isLoggedIn && (
-        <FollowList>
-          <FollowPerson>
-            <FollowPersonPhoto />
-            User 1
-          </FollowPerson>
-          <FollowPerson>
-            <FollowPersonPhoto />
-            User 2
-          </FollowPerson>
-          <FollowPerson>
-            <FollowPersonPhoto />
-            User 3
-          </FollowPerson>
-        </FollowList>
-      )}
     </Wrapper>
   );
 }

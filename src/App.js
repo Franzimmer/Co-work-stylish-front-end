@@ -5,7 +5,10 @@ import { Reset } from "styled-reset";
 
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
+import FollowList from "./components/FollowList/FollowList";
+import Notification from "./components/Notification/Notification";
 import CartContext from "./contexts/CartContext";
+import LogInContext from "./contexts/LogInContext";
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
 import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
@@ -68,18 +71,24 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
   //控制追蹤清單開關
-  const [track, setTrack] = useState("block");
-  function toggle(val) {
-    if (val === "block") setTrack("none");
-    else setTrack("block");
-  }
+  const [switchSidebar, setSwitchSidebar] = useState({
+    followList: "none",
+    notification: "none",
+  });
 
-  //控制推播清單
-  const [bell, setBell] = useState("block");
-  function toggleBell(val) {
-    if (val === "block") setBell("none");
-    else setBell("block");
-  }
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(window.localStorage.getItem("jwtToken"))
+  );
+
+  const changeLogInStatus = (status) => {
+    setIsLoggedIn(status);
+    return;
+  };
+
+  const logInController = {
+    isLoggedIn,
+    changeLogInStatus,
+  };
 
   const [cartItems, setCartItems] = useState(
     JSON.parse(window.localStorage.getItem("cartItems")) || []
@@ -133,16 +142,18 @@ function App() {
 
   return (
     <CartContext.Provider value={cart}>
-      <Reset />
-      <GlobalStyle />
-      <Header
-        toggle={toggle}
-        toggleBell={toggleBell}
-        track={track}
-        bell={bell}
-      />
-      <Outlet context={{ track, bell }} />
-      <Footer />
+      <LogInContext.Provider value={logInController}>
+        <Reset />
+        <GlobalStyle />
+        <Header
+          switchSidebar={switchSidebar}
+          setSwitchSidebar={setSwitchSidebar}
+        />
+        {isLoggedIn && <FollowList switchSidebar={switchSidebar} />}
+        {isLoggedIn && <Notification switchSidebar={switchSidebar} />}
+        <Outlet />
+        <Footer />
+      </LogInContext.Provider>
     </CartContext.Provider>
   );
 }
