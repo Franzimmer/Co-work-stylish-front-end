@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { createGlobalStyle } from 'styled-components';
-import { Reset } from 'styled-reset';
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
+import { Reset } from "styled-reset";
 
-import Footer from './components/Footer/Footer';
-import Header from './components/Header/Header';
-import CartContext from './contexts/CartContext';
-import PingFangTCRegular from './fonts/PingFang-TC-Regular-2.otf';
-import PingFangTCThin from './fonts/PingFang-TC-Thin-2.otf';
-import NotoSansTCRegular from './fonts/NotoSansTC-Regular.otf';
-import NotoSansTCBold from './fonts/NotoSansTC-Bold.otf';
+import Footer from "./components/Footer/Footer";
+import Header from "./components/Header/Header";
+import CartContext from "./contexts/CartContext";
+import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
+import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
+import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
+import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -37,15 +37,24 @@ const GlobalStyle = createGlobalStyle`
   }
 
   * {
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
   }
 
+  html {
+    width: 100%;
+    height: 100%;
+  }
+
   body {
+    width: 100%;
+    height: 100%;
     font-family: NotoSansTC;
   }
 
   #root {
-    min-height: 100vh;
+    height: 100%;
     padding: 140px 0 115px;
     position: relative;
 
@@ -57,20 +66,22 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
   //控制追蹤清單開關
-  const [track, setTrack] = useState('block');
+  const [track, setTrack] = useState("block");
   function toggle(val) {
-    if (val === 'block') setTrack('none');
-    else setTrack('block');
+    if (val === "block") setTrack("none");
+    else setTrack("block");
   }
 
   //控制推播清單
-  const [bell, setBell] = useState('block');
+  const [bell, setBell] = useState("block");
   function toggleBell(val) {
-    if (val === 'block') setBell('none');
-    else setBell('block');
+    if (val === "block") setBell("none");
+    else setBell("block");
   }
 
-  const [cartItems, setCartItems] = useState(JSON.parse(window.localStorage.getItem('cartItems')) || []);
+  const [cartItems, setCartItems] = useState(
+    JSON.parse(window.localStorage.getItem("cartItems")) || []
+  );
 
   function getItems() {
     return cartItems;
@@ -79,8 +90,8 @@ function App() {
   function addItem(item) {
     const newCartItems = [...cartItems, item];
     setCartItems(newCartItems);
-    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
-    window.alert('已加入商品');
+    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
+    window.alert("已加入商品");
   }
 
   function changeItemQuantity(itemIndex, itemQuantity) {
@@ -93,21 +104,21 @@ function App() {
         : item
     );
     setCartItems(newCartItems);
-    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
-    window.alert('已修改數量');
+    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
+    window.alert("已修改數量");
   }
 
   function deleteItem(itemIndex) {
     const newCartItems = cartItems.filter((_, index) => index !== itemIndex);
     setCartItems(newCartItems);
-    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
-    window.alert('已刪除商品');
+    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
+    window.alert("已刪除商品");
   }
 
   function clearItems() {
     const newCartItems = [];
     setCartItems(newCartItems);
-    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
   }
 
   const cart = {
@@ -122,7 +133,12 @@ function App() {
     <CartContext.Provider value={cart}>
       <Reset />
       <GlobalStyle />
-      <Header toggle={toggle} toggleBell={toggleBell} track={track} bell={bell} />
+      <Header
+        toggle={toggle}
+        toggleBell={toggleBell}
+        track={track}
+        bell={bell}
+      />
       <Outlet context={{ track, bell }} />
       <Footer />
     </CartContext.Provider>
