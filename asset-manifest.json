@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.js": "/Co-work-stylish-front-end/static/js/main.3dd344a3.js",
+    "static/media/PingFang-TC-Thin-2.otf": "/Co-work-stylish-front-end/static/media/PingFang-TC-Thin-2.a44c12820c7ce36b8aee.otf",
+    "static/media/PingFang-TC-Regular-2.otf": "/Co-work-stylish-front-end/static/media/PingFang-TC-Regular-2.f72d2153d84aeafecae8.otf",
+    "static/media/NotoSansTC-Bold.otf": "/Co-work-stylish-front-end/static/media/NotoSansTC-Bold.ad1bddadd1f6b41fe4e7.otf",
+    "static/media/NotoSansTC-Regular.otf": "/Co-work-stylish-front-end/static/media/NotoSansTC-Regular.b018ff7b4ccc245480a4.otf",
+    "index.html": "/Co-work-stylish-front-end/index.html",
+    "main.3dd344a3.js.map": "/Co-work-stylish-front-end/static/js/main.3dd344a3.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.3dd344a3.js"
+  ]
+}
