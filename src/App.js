@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { Reset } from "styled-reset";
-
+import styled from "styled-components";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import FollowList from "./components/FollowList/FollowList";
@@ -54,28 +54,37 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100%;
     font-family: NotoSansTC;
-    display: flex;
-    flex-direction: column;
+   
   }
 
   #root {
-    height: 100%;
+    min-height: 100%;
     padding: 140px 0 115px;
     position: relative;
-
+    display: flex;
+    flex-direction: column;
     @media screen and (max-width: 1279px) {
       padding: 102px 0 208px;
     }
   }
 `;
 
+const Mask = styled.div`
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  display: ${(props) => (props.display ? "block" : "none")};
+`;
+
 function App() {
-  //控制追蹤清單開關
   const [switchSidebar, setSwitchSidebar] = useState({
     followList: "none",
     notification: "none",
   });
-
+  const [showMask, setShowMask] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(
     Boolean(window.localStorage.getItem("jwtToken"))
   );
@@ -84,27 +93,22 @@ function App() {
     setIsLoggedIn(status);
     return;
   };
-
   const logInController = {
     isLoggedIn,
     changeLogInStatus,
   };
-
   const [cartItems, setCartItems] = useState(
     JSON.parse(window.localStorage.getItem("cartItems")) || []
   );
-
   function getItems() {
     return cartItems;
   }
-
   function addItem(item) {
     const newCartItems = [...cartItems, item];
     setCartItems(newCartItems);
     window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
     window.alert("已加入商品");
   }
-
   function changeItemQuantity(itemIndex, itemQuantity) {
     const newCartItems = cartItems.map((item, index) =>
       index === itemIndex
@@ -118,7 +122,6 @@ function App() {
     window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
     window.alert("已修改數量");
   }
-
   function deleteItem(itemIndex) {
     const newCartItems = cartItems.filter((_, index) => index !== itemIndex);
     setCartItems(newCartItems);
@@ -145,6 +148,7 @@ function App() {
       <LogInContext.Provider value={logInController}>
         <Reset />
         <GlobalStyle />
+        <Mask display={showMask}></Mask>
         <Header
           switchSidebar={switchSidebar}
           setSwitchSidebar={setSwitchSidebar}

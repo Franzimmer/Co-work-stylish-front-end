@@ -18,9 +18,9 @@ const Wrapper = styled.div`
   left: 0;
   height: 140px;
   width: 100%;
-  padding: 0 54px 0 60px;
+  padding: 0 24px 0 60px;
   border-bottom: 40px solid #313538;
-  z-index: 99;
+  z-index: 9;
   background-color: white;
   display: flex;
   align-items: center;
@@ -102,12 +102,18 @@ const CategoryLink = styled(Link)`
     }
   }
 `;
-
+const SearchWrapper = styled.div`
+  position: relative;
+  @media screen and (max-width: 1279px) {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+  }
+`;
 const SearchInput = styled.input`
-  width: 200px;
+  width: 280px;
   border: none;
   outline: none;
-  background-image: url(${search});
   height: 44px;
   border: solid 1px #979797;
   color: #8b572a;
@@ -115,27 +121,53 @@ const SearchInput = styled.input`
   background-repeat: no-repeat;
   font-size: 20px;
   line-height: 24px;
-  background-position: 150px;
-  padding: 6px 45px 6px 20px;
+  background-position: 230px;
+  padding: 6px 45px 6px 80px;
 
   @media screen and (max-width: 1279px) {
-    width: 0;
-    border: none;
-    position: fixed;
-    right: 16px;
-    background-size: 32px;
-    background-position: right center;
-  }
-  &:focus {
-    @media screen and (max-width: 1279px) {
-      width: calc(100% - 20px);
-      border: solid 1px #979797;
-    }
+    position: absolute;
+    display: ${(props) => props.display};
+    width: calc(100% - 30px);
+    margin-left: 20px;
+    border: solid 1px #979797;
+    padding-left: 80px;
+    top: -22px;
   }
 `;
 
+const SerachIcon = styled.div`
+  background-image: url(${search});
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  @media screen and (max-width: 1279px) {
+    top: -22px;
+    right: 10px;
+  }
+`;
+
+const SearchSelect = styled.select`
+  width: 70px;
+  height: 44px;
+  border: solid 1px #979797;
+  padding-left: 10px;
+  background-color: #f3efef;
+  border-radius: 20px 0px 0px 20px;
+  position: absolute;
+  margint-right: 20px;
+  @media screen and (max-width: 1279px) {
+    display: ${(props) => props.display};
+    z-index: 5;
+    left: 20px;
+    top: -22px;
+  }
+`;
+const SearchSelectOption = styled.option``;
+
 const TrackIcon = styled.div`
-  margin-right: 35px;
+  margin-right: 15px;
   background-image: url(${follow});
   width: 36px;
   height: 36px;
@@ -149,7 +181,7 @@ const TrackIcon = styled.div`
 `;
 
 const BellIcon = styled.div`
-  margin-right: 35px;
+  margin-right: 20px;
   background-image: url(${bell});
   width: 36px;
   height: 36px;
@@ -202,7 +234,7 @@ const PageLink = styled(Link)`
 
   & + & {
     ${"" /* margin-left: 42px; */}
-    margin-right: 35px;
+    margin-right: 15px;
 
     @media screen and (max-width: 1279px) {
       margin-left: 0;
@@ -216,7 +248,6 @@ const PageLink = styled(Link)`
       left: 0;
       width: 1px;
       height: 24px;
-      ${"" /* margin: 10px 51px 10px 0; */}
       background-color: #828282;
     }
   }
@@ -231,7 +262,7 @@ const PageLinkIcon = styled.div`
 `;
 
 const PageLinkCartIcon = styled(PageLinkIcon)`
-  margin-right: 35px;
+  margin-right: 15px;
   background-image: url(${cart});
 
   @media screen and (max-width: 1279px) {
@@ -291,6 +322,7 @@ function Header({ switchSidebar, setSwitchSidebar }) {
   const category = searchParams.get("category");
   const { getItems } = useContext(CartContext);
   const { isLoggedIn } = useContext(LogInContext);
+  const [mobileSearch, setMobileSearch] = useState("none");
 
   function sidebarToggle(target) {
     let defaultCondition = { followList: "none", notification: "none" };
@@ -298,6 +330,11 @@ function Header({ switchSidebar, setSwitchSidebar }) {
     else if (switchSidebar[target] === "block")
       defaultCondition[target] = "none";
     setSwitchSidebar(defaultCondition);
+  }
+
+  function mobileSearchToggle() {
+    if (mobileSearch === "none") setMobileSearch("block");
+    else if (mobileSearch === "block") setMobileSearch("none");
   }
 
   useEffect(() => {
@@ -334,15 +371,23 @@ function Header({ switchSidebar, setSwitchSidebar }) {
       <BellIcon icon={bell} onClick={() => sidebarToggle("notification")}>
         {isLoggedIn && <BellIconAlert />}
       </BellIcon>
-      <SearchInput
-        onKeyPress={(e) => {
-          if (e.key === "Enter") {
-            navigate(`/?keyword=${inputValue}`);
-          }
-        }}
-        onChange={(e) => setInputValue(e.target.value)}
-        value={inputValue}
-      />
+      <SearchWrapper>
+        <SearchSelect display={mobileSearch}>
+          <SearchSelectOption>商品</SearchSelectOption>
+          <SearchSelectOption>帳號</SearchSelectOption>
+        </SearchSelect>
+        <SearchInput
+          display={mobileSearch}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              navigate(`/?keyword=${inputValue}`);
+            }
+          }}
+          onChange={(e) => setInputValue(e.target.value)}
+          value={inputValue}
+        ></SearchInput>
+        <SerachIcon onClick={mobileSearchToggle} />
+      </SearchWrapper>
     </Wrapper>
   );
 }

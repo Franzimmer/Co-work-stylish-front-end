@@ -1,27 +1,23 @@
 import { useState, useContext } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebook,
-  faLine,
-  faGoogle,
-} from "@fortawesome/free-brands-svg-icons";
-import getJwtToken from "../../utils/getJwtToken";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import LogInContext from "../../contexts/LogInContext";
-
+import LoginPanel from "./LoginPanel";
+import LiveStreamingAlert from "./LiveStreamingAlert";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  height: 100%;
+  flex: 1;
 `;
 const Menu = styled.div`
   display: flex;
   flex-direction: column;
   width: 20vw;
   background-color: #fbf3f2;
-  height: 100%;
+  position: sticky;
   color: #e27d60;
   letter-spacing: 1px;
   font-size: 20px;
@@ -36,14 +32,12 @@ const MenuItem = styled.div`
   margin: 0px 0px 20px 40px;
   white-space: nowrap;
 `;
-
 const UserMainColumn = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  align-self: center;
 `;
-
 const UserWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -53,7 +47,6 @@ const UserWrapper = styled.div`
   position: relative;
   height: 18vh;
 `;
-
 const UserInfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -67,7 +60,6 @@ const UserInfoWrapper = styled.div`
     bottom: 15px;
   }
 `;
-
 const Photo = styled.img`
   margin-top: 50px;
   border-radius: 50%;
@@ -83,7 +75,6 @@ const Photo = styled.img`
     bottom: 10px;
   }
 `;
-
 const Name = styled.div`
   font-size: 24px;
   font-weight: 500;
@@ -93,7 +84,6 @@ const Name = styled.div`
     font-size: 20px;
   }
 `;
-
 const Mail = styled.div`
   margin-top: 10px;
   color: #999;
@@ -107,34 +97,28 @@ const Followers = styled.div`
   position: absolute;
   bottom: 20px;
   left: 580px;
-
   @media (max-width: 1279px) {
     margin-top: 20px;
     left: 280px;
     bottom: 15px;
   }
 `;
-
 const FollowersTitle = styled.div`
   font-weight: 500;
   font-size: 20px;
   margin-bottom: 10px;
-
   @media (max-width: 1279px) {
     font-size: 16px;
   }
 `;
-
 const FollowersNumbers = styled.div`
   font-weight: 400;
   font-size: 16px;
   text-align: center;
-
   @media (max-width: 1279px) {
     font-size: 14px;
   }
 `;
-
 const Button = styled.button`
   color: #fff;
   letter-spacing: 1px;
@@ -149,7 +133,6 @@ const Button = styled.button`
     padding: 5px;
   }
 `;
-
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -157,7 +140,6 @@ const ButtonWrapper = styled.div`
     flex-direction: column;
   }
 `;
-
 const LiveButton = styled(Button)`
   background-color: #e27d60;
   border: 1px solid #e27d60;
@@ -173,9 +155,9 @@ const LiveButton = styled(Button)`
   @media (max-width: 599px) {
     margin-top: 20px;
     left: 250px;
+    bottom: 60px;
   }
 `;
-
 const LogoutButton = styled(Button)`
   background-color: #8b572a;
   border: 1px solid #8b572a;
@@ -194,7 +176,6 @@ const LogoutButton = styled(Button)`
     bottom: 60px;
   }
 `;
-
 const DailyTaskReminder = styled.div`
   color: #8b572a;
   height: 10vh;
@@ -207,64 +188,68 @@ const DailyTaskReminder = styled.div`
     font-size: 16px;
   }
 `;
-
 const Tabs = styled.div`
   border-bottom: 4px solid #f3efef;
   height: 8vh;
   width: 80%;
-  margin: 30px auto 0px auto;
+  margin: 0px auto 0px auto;
   display: flex;
 `;
-
 const Tab = styled.div`
   height: 3vh;
   line-height: 3vh;
-  background-color: #f3efef;
   color: #8b572a;
-  border-radius: 5px;
-  margin: 4vh 15px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
+  border: 3px solid #f3efef;
+  margin: 5vh 15px 0px 0px;
   padding: 0px 10px;
+  cursor: pointer;
+  background-color: ${(props) => (props.bgColor ? "#f3efef" : "none")};
+  white-space: nowrap;
 `;
+//再寫成獨立組件
 const Game = styled.div`
   background-color: #f3efef;
-  height: auto;
+  height: 500px;
   width: 80%;
   margin: 20px auto;
 `;
-const LoginPanel = styled.div`
+const ReelsPanel = styled.div`
+  height: 500px;
+  width: 80%;
+  margin: 20px auto;
+  display: flex;
+  position: relative;
+`;
+const Reel = styled.div`
   height: 100%;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: 30%;
+  margin: 0px 10px;
+  background-color: #f3efef;
+  border-radius: 10px;
 `;
-const LoginBtn = styled.div`
-  width: 300px;
-  height: 50px;
+const ReelsDirection = styled.div`
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  color: #999;
+  font-size: 24px;
   text-align: center;
-  border-radius: 30px;
-  letter-spacing: 2px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  position: absolute;
+  top: 40%;
+  background-color: #fff;
+  border: 1px solid #999;
 `;
-const FbLoginBtn = styled(LoginBtn)`
-  background-color: #1877f2;
-  margin-bottom: 20px;
+const ReelsLeft = styled(ReelsDirection)`
+  left: -10px;
 `;
-const LineLoginBtn = styled(LoginBtn)`
-  background-color: #00ba00;
-  margin-bottom: 20px;
+const ReelsRight = styled(ReelsDirection)`
+  right: -10px;
 `;
-const GoogleLoginBtn = styled(LoginBtn)`
-  background-color: red;
-`;
-const StyledFontAwesomeIcon = styled(FontAwesomeIcon)`
-  color: white;
-  font-size: 30px;
-  margin-right: 10px;
+const WishList = styled.div`
+  width: 80%;
+  margin: 20px auto;
 `;
 
 function Profile() {
@@ -274,86 +259,108 @@ function Profile() {
   const logInController = useContext(LogInContext);
   const logInStatus = logInController.isLoggedIn;
   const changeLogInStatus = logInController.changeLogInStatus;
+  const [isLiveStreamingOn, setIsLiveStreamingOn] = useState(false);
+  const [showLiveAlert, setShowLiveAlert] = useState(false);
+  const [tabSelected, setTabSelected] = useState({
+    task: true,
+    reels: false,
+    wishList: false,
+  });
 
-  async function getProfile() {
-    let jwtToken = window.localStorage.getItem("jwtToken");
-    let userData;
-    if (!jwtToken) {
-      try {
-        userData = await getJwtToken();
-      } catch (e) {
-        window.alert(e.message);
-        return;
-      }
-    }
-    window.localStorage.setItem("jwtToken", userData.access_token);
-    window.localStorage.setItem("user", JSON.stringify(userData.user));
-    changeLogInStatus(true);
-    setProfile(userData.user);
+  function tabSwitched(target) {
+    if (!target) return;
+    let defaultTab = {
+      task: false,
+      reels: false,
+      wishList: false,
+    };
+    defaultTab[target] = true;
+    setTabSelected(defaultTab);
   }
 
   return (
-    <Wrapper>
-      {logInStatus && (
-        <Menu>
-          <MenuItem>- Order</MenuItem>
-          <MenuItem>- Coupon</MenuItem>
-        </Menu>
-      )}
-      <UserMainColumn>
-        {!logInStatus && (
-          <LoginPanel>
-            <FbLoginBtn onClick={getProfile}>
-              <StyledFontAwesomeIcon icon={faFacebook} />
-              以Facebook登入
-            </FbLoginBtn>
-            <LineLoginBtn>
-              <StyledFontAwesomeIcon icon={faLine} />
-              以Line登入
-            </LineLoginBtn>
-            <GoogleLoginBtn>
-              <StyledFontAwesomeIcon icon={faGoogle} />
-              以Google帳號登入
-            </GoogleLoginBtn>
-          </LoginPanel>
-        )}
-        {logInStatus && profile && (
-          <UserWrapper>
-            <Photo src={profile.picture} />
-            <UserInfoWrapper>
-              <Name>{profile.name}</Name>
-              <Mail>{profile.email}</Mail>
-            </UserInfoWrapper>
-            <Followers>
-              <FollowersTitle>粉絲數量</FollowersTitle>
-              <FollowersNumbers>209</FollowersNumbers>
-            </Followers>
-            <ButtonWrapper>
-              <LiveButton>直播</LiveButton>
-              <LogoutButton
-                onClick={() => {
-                  window.localStorage.removeItem("jwtToken");
-                  changeLogInStatus(false);
-                }}
-              >
-                登出
-              </LogoutButton>
-            </ButtonWrapper>
-          </UserWrapper>
-        )}
+    <>
+      <Wrapper>
         {logInStatus && (
-          <DailyTaskReminder>你還未執行每日任務！</DailyTaskReminder>
+          <Menu>
+            <MenuItem>- Order</MenuItem>
+            <MenuItem>- Coupon</MenuItem>
+          </Menu>
         )}
-        {logInStatus && (
-          <Tabs>
-            <Tab>每日任務</Tab>
-            <Tab>貼文</Tab>
-            <Tab>心願清單</Tab>
-          </Tabs>
-        )}
-        {logInStatus && <Game></Game>}
-      </UserMainColumn>
-    </Wrapper>
+        <UserMainColumn>
+          {!logInStatus && <LoginPanel setProfile={setProfile} />}
+          {logInStatus && profile && (
+            <UserWrapper>
+              <Photo src={profile.picture} />
+              <UserInfoWrapper>
+                <Name>{profile.name}</Name>
+                <Mail>{profile.email}</Mail>
+              </UserInfoWrapper>
+              <Followers>
+                <FollowersTitle>粉絲數量</FollowersTitle>
+                <FollowersNumbers>209</FollowersNumbers>
+              </Followers>
+              <ButtonWrapper>
+                {!isLiveStreamingOn ? (
+                  <LiveButton onClick={() => setShowLiveAlert(true)}>
+                    直播
+                  </LiveButton>
+                ) : (
+                  <LiveButton> 直播中 </LiveButton>
+                )}
+                <LogoutButton
+                  onClick={() => {
+                    window.localStorage.removeItem("jwtToken");
+                    changeLogInStatus(false);
+                  }}
+                >
+                  登出
+                </LogoutButton>
+              </ButtonWrapper>
+            </UserWrapper>
+          )}
+          {showLiveAlert && (
+            <LiveStreamingAlert
+              setShowLiveAlert={setShowLiveAlert}
+              setIsLiveStreamingOn={setIsLiveStreamingOn}
+            />
+          )}
+          {logInStatus && (
+            <DailyTaskReminder>你還未執行每日任務！</DailyTaskReminder>
+          )}
+          {logInStatus && (
+            <Tabs onClick={(e) => tabSwitched(e.target.id)}>
+              <Tab id="task" bgColor={tabSelected.task}>
+                每日任務
+              </Tab>
+              <Tab id="reels" bgColor={tabSelected.reels}>
+                Reels
+              </Tab>
+              <Tab id="wishList" bgColor={tabSelected.wishList}>
+                心願清單
+              </Tab>
+            </Tabs>
+          )}
+          {logInStatus && tabSelected.task ? (
+            <Game />
+          ) : logInStatus && tabSelected.reels ? (
+            <ReelsPanel>
+              <ReelsLeft>
+                <FontAwesomeIcon icon={faAngleLeft} />
+              </ReelsLeft>
+              <Reel />
+              <Reel />
+              <Reel />
+              <ReelsRight>
+                <FontAwesomeIcon icon={faAngleRight} />
+              </ReelsRight>
+            </ReelsPanel>
+          ) : logInStatus && tabSelected.WishList ? (
+            <WishList />
+          ) : null}
+        </UserMainColumn>
+      </Wrapper>
+    </>
   );
 }
 

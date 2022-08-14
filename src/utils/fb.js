@@ -3,7 +3,6 @@ const fb = {
     return new Promise((resolve) => {
       if (!window.FB) {
         window.fbAsyncInit = () => {
-          console.log("test");
           resolve();
         };
       } else resolve();

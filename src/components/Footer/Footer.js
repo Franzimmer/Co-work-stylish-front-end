@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   background-color: #313538;
   font-family: PingFangTC;
   position: absolute;
+  bottom: 0;
   z-index: 4;
 
   @media screen and (max-width: 1279px) {
