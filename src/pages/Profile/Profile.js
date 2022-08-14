@@ -16,6 +16,7 @@ const UserMainColumn = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  align-self: ${(props) => (props.position ? null : "center")};
 `;
 const UserWrapper = styled.div`
   display: flex;
@@ -260,7 +261,7 @@ function Profile() {
   return (
     <>
       <Wrapper>
-        <UserMainColumn>
+        <UserMainColumn position={logInStatus}>
           {!logInStatus && <LoginPanel setProfile={setProfile} />}
           {logInStatus && profile && (
             <UserWrapper>
