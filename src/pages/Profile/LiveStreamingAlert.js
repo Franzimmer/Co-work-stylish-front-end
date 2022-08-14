@@ -6,7 +6,8 @@ import api from "../../utils/api";
 const LiveStreamingAlertWrapper = styled.div`
   width: 50vw;
   height: auto;
-  margin: 50px;
+  align-self: center;
+  margin-top: 100px;
   position: fixed;
   z-index: 5;
   background-color: #fff;
@@ -17,7 +18,7 @@ const LiveStreamingAlertWrapper = styled.div`
   @media screen and (max-width: 1279px) {
     margin: 0px;
     width: 100vw;
-    height: 82vh;
+    height: auto;
   }
 `;
 const AlertCloseBtn = styled.div`

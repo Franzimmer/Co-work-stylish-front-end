@@ -12,31 +12,10 @@ const Wrapper = styled.div`
   align-items: flex-start;
   flex: 1;
 `;
-const Menu = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 20vw;
-  background-color: #fbf3f2;
-  position: sticky;
-  color: #e27d60;
-  letter-spacing: 1px;
-  font-size: 20px;
-  font-weight: 500;
-  padding-top: 20px;
-
-  @media (max-width: 1279px) {
-    display: none;
-  }
-`;
-const MenuItem = styled.div`
-  margin: 0px 0px 20px 40px;
-  white-space: nowrap;
-`;
 const UserMainColumn = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-self: center;
 `;
 const UserWrapper = styled.div`
   display: flex;
@@ -281,12 +260,6 @@ function Profile() {
   return (
     <>
       <Wrapper>
-        {logInStatus && (
-          <Menu>
-            <MenuItem>- Order</MenuItem>
-            <MenuItem>- Coupon</MenuItem>
-          </Menu>
-        )}
         <UserMainColumn>
           {!logInStatus && <LoginPanel setProfile={setProfile} />}
           {logInStatus && profile && (
