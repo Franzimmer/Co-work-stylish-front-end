@@ -1,53 +1,65 @@
 const api = {
-  hostname: 'https://api.appworks-school.tw/api/1.0',
+  hostname: "https://api.appworks-school.tw/api/1.0",
+  hostname1: "https://www.domingoos.store/api/1.0",
   async getProducts(category, paging) {
     const response = await fetch(
-      `${this.hostname}/products/${category}?paging=${paging}`
+      `${this.hostname1}/products/${category}?paging=${paging}`
     );
     return await response.json();
   },
   async getCampaigns() {
-    const response = await fetch(`${this.hostname}/marketing/campaigns`);
+    const response = await fetch(`${this.hostname1}/marketing/campaigns`);
     return await response.json();
   },
   async searchProducts(keyword, paging) {
     const response = await fetch(
-      `${this.hostname}/products/search?keyword=${keyword}&paging=${paging}`
+      `${this.hostname1}/products/search?keyword=${keyword}&paging=${paging}`
     );
     return await response.json();
   },
   async getProduct(id) {
-    const response = await fetch(`${this.hostname}/products/details?id=${id}`);
+    const response = await fetch(`${this.hostname1}/products/details?id=${id}`);
     return await response.json();
   },
   async checkout(data, jwtToken) {
     const response = await fetch(`${this.hostname}/order/checkout`, {
       body: JSON.stringify(data),
       headers: new Headers({
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${jwtToken}`,
       }),
-      method: 'POST',
+      method: "POST",
     });
     return await response.json();
   },
   async signin(data) {
-    const response = await fetch(`${this.hostname}/user/signin`, {
+    const response = await fetch(`${this.hostname1}/user/signin`, {
       body: JSON.stringify(data),
       headers: new Headers({
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       }),
-      method: 'POST',
+      method: "POST",
     });
     return await response.json();
   },
-  async getProfile(jwtToken) {
-    const response = await fetch(`${this.hostname}/user/profile`, {
+  async signup(data) {
+    const response = await fetch(`${this.hostname1}/user/signup`, {
+      body: JSON.stringify(data),
       headers: new Headers({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "application/json",
       }),
+      method: "POST",
     });
+    return await response.json();
+  },
+  async searchUsers(keyword) {
+    const response = await fetch(
+      `${this.hostname1}/user/search?keyword=${keyword}`
+    );
+    return await response.json();
+  },
+  async getProfile(id) {
+    const response = await fetch(`${this.hostname1}/user/${id}/info`);
     return await response.json();
   },
 };

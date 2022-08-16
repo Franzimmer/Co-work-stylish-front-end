@@ -1,19 +1,20 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import line from './line.png';
-import facebook from './facebook.png';
-import twitter from './twitter.png';
+import line from "./line.png";
+import facebook from "./facebook.png";
+import twitter from "./twitter.png";
 
 const Wrapper = styled.div`
-  position: absolute;
-  bottom: 0;
+  flex-shrink: 0;
   width: 100%;
   background-color: #313538;
   font-family: PingFangTC;
+  position: absolute;
+  bottom: 0;
   z-index: 4;
 
   @media screen and (max-width: 1279px) {
-    bottom: 60px;
+    padding-bottom: 60px;
   }
 `;
 
@@ -65,12 +66,12 @@ const SiteLink = styled.div`
   }
 
   & + &::before {
-    content: '|';
+    content: "|";
     position: absolute;
     left: 0;
 
     @media screen and (max-width: 1279px) {
-      content: '';
+      content: "";
     }
   }
 `;
@@ -128,9 +129,11 @@ function Footer() {
     <Wrapper>
       <Content>
         <SiteLinks>
-          {['關於 Stylish', '服務條款', '隱私政策', '聯絡我們', 'FAQ'].map((text, index) => (
-            <SiteLink key={index}>{text}</SiteLink>
-          ))}
+          {["關於 Stylish", "服務條款", "隱私政策", "聯絡我們", "FAQ"].map(
+            (text, index) => (
+              <SiteLink key={index}>{text}</SiteLink>
+            )
+          )}
         </SiteLinks>
         <SocialLinks>
           {[line, twitter, facebook].map((icon, index) => (
