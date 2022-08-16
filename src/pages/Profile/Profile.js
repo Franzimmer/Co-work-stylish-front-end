@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useOutletContext, useParams, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import LiveStreamingAlert from './LiveStreamingAlert';
-import io from 'socket.io-client';
-import api from '../../utils/api';
-import personhead from './personhead.png';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import LiveStreamingAlert from "./LiveStreamingAlert";
+import io from "socket.io-client";
+import api from "../../utils/api";
+import personhead from "./personhead.png";
 //上傳影片Reels
-import axios from 'axios';
+import axios from "axios";
 //直播畫面
-import { MemoVideoLoad } from '../../components/LiveJump/VideoLoad';
-import VideoProducts from '../../components/LiveJump//VideoProducts';
+import { MemoVideoLoad } from "../../components/LiveJump/VideoLoad";
+import VideoProducts from "../../components/LiveJump//VideoProducts";
+import Game from "./Game/Game";
 
 const Wrapper = styled.div`
   display: flex;
@@ -207,7 +208,6 @@ const DailyTaskReminder = styled.div`
 `;
 const Tabs = styled.div`
   border-bottom: 10px solid #f3efef;
-  height: 80px;
   width: 80%;
   margin: 0px auto 0px auto;
   display: flex;
@@ -221,7 +221,7 @@ const Tab = styled.div`
   margin: 45px 15px 0px 0px;
   padding: 0px 10px;
   cursor: pointer;
-  background-color: ${(props) => (props.$bgColor ? '#f3efef' : 'none')};
+  background-color: ${(props) => (props.$bgColor ? "#f3efef" : "none")};
   white-space: nowrap;
   @media (max-width: 1279px) {
     font-size: 14px;
@@ -231,10 +231,9 @@ const Tab = styled.div`
     padding: 0px 5px;
   }
 `;
-//再寫成獨立組件
-const Game = styled.div`
+const GameWrapper = styled.div`
   background-color: #f3efef;
-  height: 500px;
+  height: 100%;
   width: 80%;
   margin: 20px auto;
 `;
@@ -296,7 +295,15 @@ function Profile() {
   const { id } = useParams();
   const [profile, setProfile] = useState();
   let navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, setFollowList, setNotice] = useOutletContext();
+  const [
+    isLoggedIn,
+    setIsLoggedIn,
+    setShowMask,
+    ws,
+    setWs,
+    setFollowList,
+    setNotice,
+  ] = useOutletContext();
   const [isLiveStreamingOn, setIsLiveStreamingOn] = useState(false);
   const [showLiveAlert, setShowLiveAlert] = useState(false);
   const [tabSelected, setTabSelected] = useState({
@@ -312,12 +319,12 @@ function Profile() {
   const [currentPage, setCurrentPage] = useState(0);
   const [userID, setUserID] = useState(10250);
   //開啟關閉直播
-  const [videoZone, setVideoZone] = useState('none');
+  const [videoZone, setVideoZone] = useState("none");
   const closeVideo = useCallback(() => {
-    setVideoZone('none');
+    setVideoZone("none");
   }, []);
   const openVideo = useCallback(() => {
-    setVideoZone('block');
+    setVideoZone("block");
   }, []);
 
   function tabSwitched(target) {
@@ -333,64 +340,64 @@ function Profile() {
   }
 
   const disconnectWs = () => {
-    ws.on('disconnect');
+    ws.on("disconnect");
     setWs(null);
-    console.log('disconnect');
+    console.log("disconnect");
   };
 
   const openLive = (data) => {
-    const live = io('https://domingoos.store/influencer', {
+    const live = io("https://domingoos.store/influencer", {
       query: { live_setting: 1 },
       extraHeaders: {
-        jwtToken: localStorage.getItem('jwtToken'),
+        jwtToken: localStorage.getItem("jwtToken"),
       },
     });
-    live.emit('liveInfo', { status: 1, products: data });
-    live.on('disconnect');
+    live.emit("liveInfo", { status: 1, products: data });
+    live.on("disconnect");
   };
 
   const authLive = () => {
-    const live = io('https://domingoos.store/influencer', {
+    const live = io("https://domingoos.store/influencer", {
       query: { live_setting: 1 },
       extraHeaders: {
-        jwtToken: localStorage.getItem('jwtToken'),
+        jwtToken: localStorage.getItem("jwtToken"),
       },
     });
-    live.on('status', (data) => {
+    live.on("status", (data) => {
       if (data.status == 200) {
         //取得連線地址跟金鑰
-        live.on('key', (data) => {
+        live.on("key", (data) => {
           if (data.status == 200) {
             setLiveKey(data.key);
             setUrl(data.url);
             setShowLiveAlert(true);
             setShowMask(true);
           } else {
-            window.alert('金鑰取得失敗！');
+            window.alert("金鑰取得失敗！");
           }
         });
       } else {
-        alert('身份驗證失敗！');
+        alert("身份驗證失敗！");
       }
     });
 
-    live.on('disconnect');
+    live.on("disconnect");
   };
 
   const closeLive = () => {
-    const live = io('https://domingoos.store/influencer', {
+    const live = io("https://domingoos.store/influencer", {
       query: { live_setting: 0 },
       extraHeaders: {
-        jwtToken: localStorage.getItem('jwtToken'),
+        jwtToken: localStorage.getItem("jwtToken"),
       },
     });
 
-    live.once('status', (res) => {
-      if (res === '200') {
-        live.emit('liveInfo', { status: 0 });
+    live.once("status", (res) => {
+      if (res === "200") {
+        live.emit("liveInfo", { status: 0 });
       }
     });
-    live.on('disconnect');
+    live.on("disconnect");
   };
 
   useEffect(() => {
@@ -405,9 +412,9 @@ function Profile() {
   useEffect(() => {
     if (isLoggedIn) {
       setWs(
-        io('https://domingoos.store', {
+        io("https://domingoos.store", {
           extraHeaders: {
-            jwtToken: localStorage.getItem('jwtToken'),
+            jwtToken: localStorage.getItem("jwtToken"),
           },
         })
       );
@@ -416,13 +423,13 @@ function Profile() {
 
   useEffect(() => {
     if (ws) {
-      ws.on('status', (data) => {
+      ws.on("status", (data) => {
         if (data.status === 200) {
-          ws.on('followList', (data) => {
+          ws.on("followList", (data) => {
             setFollowList(data);
             console.log(data);
           });
-          ws.on('live', (data) => {
+          ws.on("live", (data) => {
             setNotice(data);
             console.log(data);
           });
@@ -433,7 +440,7 @@ function Profile() {
 
   //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝上傳影片＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
-  const jwtToken = localStorage.getItem('jwtToken');
+  const jwtToken = localStorage.getItem("jwtToken");
 
   const inputRef = useRef();
 
@@ -441,15 +448,15 @@ function Profile() {
     const video = inputRef.current.files[0];
     // video.userID = 1;
     let formData = new FormData();
-    formData.append('video', video);
-    formData.append('userID', 1);
+    formData.append("video", video);
+    formData.append("userID", 1);
     const { data } = await axios({
-      method: 'post',
+      method: "post",
       url: `https://www.domingoos.store/api/1.0/user/${userID}/reels`,
       data: formData,
       headers: {
         Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     getVideo();
@@ -474,7 +481,9 @@ function Profile() {
   }
 
   function getVideo() {
-    fetch(`https://www.domingoos.store/api/1.0/user/${userID}/reels?paging=${currentPage}`)
+    fetch(
+      `https://www.domingoos.store/api/1.0/user/${userID}/reels?paging=${currentPage}`
+    )
       .then((res) => res.json())
       .then((data) => {
         setReels(data.data);
@@ -508,7 +517,7 @@ function Profile() {
   return (
     <>
       <Wrapper>
-        {videoZone === 'block' && (
+        {videoZone === "block" && (
           <>
             <MemoVideoLoad closeVideo={closeVideo} />
             <VideoProducts />
@@ -519,13 +528,18 @@ function Profile() {
           {isLoggedIn && profile && (
             <UserWrapper>
               <UserInfoWrapper>
-                <Photo src={profile.picture || personhead} onClick={openVideo} />
+                <Photo
+                  src={profile.picture || personhead}
+                  onClick={openVideo}
+                />
                 <NameButton>
                   <NameFollowers>
                     <Name>{profile.name}</Name>
                     <Followers>
                       <FollowersTitle>粉絲數量</FollowersTitle>
-                      <FollowersNumbers>{profile.follower_count}</FollowersNumbers>
+                      <FollowersNumbers>
+                        {profile.follower_count}
+                      </FollowersNumbers>
                     </Followers>
                   </NameFollowers>
                   <ButtonWrapper>
@@ -556,7 +570,7 @@ function Profile() {
                         className="file-uploader"
                         data-target="file-uploader"
                         accept="video/*"
-                        style={{ display: 'none' }}
+                        style={{ display: "none" }}
                       />
                     </UploadVideoInputButton>
                     <UploadVideoButton onClick={uploadVideo} id="video-btn">
@@ -564,11 +578,11 @@ function Profile() {
                     </UploadVideoButton>
                     <LogoutButton
                       onClick={() => {
-                        window.localStorage.removeItem('jwtToken');
-                        window.localStorage.removeItem('user');
+                        window.localStorage.removeItem("jwtToken");
+                        window.localStorage.removeItem("user");
                         setIsLoggedIn(false);
                         disconnectWs();
-                        navigate('/login');
+                        navigate("/login");
                       }}
                     >
                       登出
@@ -588,7 +602,9 @@ function Profile() {
               url={url}
             />
           )}
-          {isLoggedIn && <DailyTaskReminder>你還未執行每日任務！</DailyTaskReminder>}
+          {isLoggedIn && (
+            <DailyTaskReminder>你還未執行每日任務！</DailyTaskReminder>
+          )}
           {isLoggedIn && (
             <Tabs onClick={(e) => tabSwitched(e.target.id)}>
               <Tab id="task" $bgColor={tabSelected.task}>
@@ -606,7 +622,9 @@ function Profile() {
             </Tabs>
           )}
           {isLoggedIn && tabSelected.task ? (
-            <Game />
+            <GameWrapper>
+              <Game />
+            </GameWrapper>
           ) : isLoggedIn && tabSelected.reels ? (
             <ReelsPanel>
               <ReelsLeft onClick={ReelPageReduce}>
@@ -614,7 +632,15 @@ function Profile() {
               </ReelsLeft>
               {Reels.map((video) => (
                 <Reel>
-                  <video autoPlay loop height={480} width={270} controls src={video.url} muted></video>
+                  <video
+                    autoPlay
+                    loop
+                    height={480}
+                    width={270}
+                    controls
+                    src={video.url}
+                    muted
+                  ></video>
                 </Reel>
               ))}
               <ReelsRight onClick={ReelPageAdd}>
