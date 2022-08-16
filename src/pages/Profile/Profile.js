@@ -1,10 +1,11 @@
-import { useState, useContext } from "react";
+import { useState, useEffect } from "react";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import LogInContext from "../../contexts/LogInContext";
-import LoginPanel from "./LoginPanel";
 import LiveStreamingAlert from "./LiveStreamingAlert";
+import io from "socket.io-client";
+import personhead from "./personhead.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -176,15 +177,15 @@ const Tabs = styled.div`
   display: flex;
 `;
 const Tab = styled.div`
-  height: 3vh;
-  line-height: 3vh;
+  height: 30px;
+  line-height: 30px;
   color: #8b572a;
   border-radius: 5px 5px 0px 0px;
   border: 3px solid #f3efef;
-  margin: 5vh 15px 0px 0px;
+  margin: calc(8vh - 30px) 15px 0px 0px;
   padding: 0px 10px;
   cursor: pointer;
-  background-color: ${(props) => (props.bgColor ? "#f3efef" : "none")};
+  background-color: ${(props) => (props.$bgColor ? "#f3efef" : "none")};
   white-space: nowrap;
 `;
 //再寫成獨立組件
@@ -236,16 +237,27 @@ function Profile() {
   const [profile, setProfile] = useState(
     JSON.parse(window.localStorage.getItem("user"))
   );
-  const logInController = useContext(LogInContext);
-  const logInStatus = logInController.isLoggedIn;
-  const changeLogInStatus = logInController.changeLogInStatus;
+  // const { id } = useParams();
+  let navigate = useNavigate();
+  const [
+    isLoggedIn,
+    setIsLoggedIn,
+    setShowMask,
+    ws,
+    setWs,
+    setFollowList,
+    setNotice,
+  ] = useOutletContext();
   const [isLiveStreamingOn, setIsLiveStreamingOn] = useState(false);
   const [showLiveAlert, setShowLiveAlert] = useState(false);
   const [tabSelected, setTabSelected] = useState({
     task: true,
     reels: false,
     wishList: false,
+    coupon: false,
   });
+  const [liveKey, setLiveKey] = useState();
+  const [url, setUrl] = useState();
 
   function tabSwitched(target) {
     if (!target) return;
@@ -253,19 +265,108 @@ function Profile() {
       task: false,
       reels: false,
       wishList: false,
+      coupon: false,
     };
     defaultTab[target] = true;
     setTabSelected(defaultTab);
   }
 
+  const disconnectWs = () => {
+    ws.on("disconnect");
+    setWs(null);
+    console.log("disconnect");
+  };
+
+  const openLive = (data) => {
+    const live = io("https://domingoos.store/influencer", {
+      query: { live_setting: 1 },
+      extraHeaders: {
+        jwtToken: localStorage.getItem("jwtToken"),
+      },
+    });
+    live.emit("liveInfo", { status: 1, products: data });
+    live.on("disconnect");
+  };
+
+  const authLive = () => {
+    const live = io("https://domingoos.store/influencer", {
+      query: { live_setting: 1 },
+      extraHeaders: {
+        jwtToken: localStorage.getItem("jwtToken"),
+      },
+    });
+    live.on("status", (data) => {
+      if (data.status == 200) {
+        //取得連線地址跟金鑰
+        live.on("key", (data) => {
+          if (data.status == 200) {
+            setLiveKey(data.key);
+            setUrl(data.url);
+            setShowLiveAlert(true);
+            setShowMask(true);
+          } else {
+            window.alert("金鑰取得失敗！");
+          }
+        });
+      } else {
+        alert("身份驗證失敗！");
+      }
+    });
+
+    live.on("disconnect");
+  };
+
+  const closeLive = () => {
+    const live = io("https://domingoos.store/influencer", {
+      query: { live_setting: 0 },
+      extraHeaders: {
+        jwtToken: localStorage.getItem("jwtToken"),
+      },
+    });
+
+    live.once("status", (res) => {
+      if (res === "200") {
+        live.emit("liveInfo", { status: 0 });
+      }
+    });
+    live.on("disconnect");
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setWs(
+        io("https://domingoos.store", {
+          extraHeaders: {
+            jwtToken: localStorage.getItem("jwtToken"),
+          },
+        })
+      );
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (ws) {
+      ws.on("status", (data) => {
+        if (data.status === 200) {
+          ws.on("followList", (data) => {
+            setFollowList(data);
+            console.log(data);
+          });
+          ws.on("live", (data) => {
+            setNotice(data);
+            console.log(data);
+          });
+        }
+      });
+    }
+  }, [ws]);
   return (
     <>
       <Wrapper>
-        <UserMainColumn position={logInStatus}>
-          {!logInStatus && <LoginPanel setProfile={setProfile} />}
-          {logInStatus && profile && (
+        <UserMainColumn position={isLoggedIn}>
+          {isLoggedIn && profile && (
             <UserWrapper>
-              <Photo src={profile.picture} />
+              <Photo src={profile.picture || personhead} />
               <UserInfoWrapper>
                 <Name>{profile.name}</Name>
                 <Mail>{profile.email}</Mail>
@@ -276,16 +377,31 @@ function Profile() {
               </Followers>
               <ButtonWrapper>
                 {!isLiveStreamingOn ? (
-                  <LiveButton onClick={() => setShowLiveAlert(true)}>
+                  <LiveButton
+                    onClick={() => {
+                      authLive();
+                    }}
+                  >
                     直播
                   </LiveButton>
                 ) : (
-                  <LiveButton> 直播中 </LiveButton>
+                  <LiveButton
+                    onClick={() => {
+                      closeLive();
+                      setIsLiveStreamingOn(false);
+                    }}
+                  >
+                    {" "}
+                    結束直播{" "}
+                  </LiveButton>
                 )}
                 <LogoutButton
                   onClick={() => {
                     window.localStorage.removeItem("jwtToken");
-                    changeLogInStatus(false);
+                    window.localStorage.removeItem("user");
+                    setIsLoggedIn(false);
+                    disconnectWs();
+                    navigate("/login");
                   }}
                 >
                   登出
@@ -297,27 +413,34 @@ function Profile() {
             <LiveStreamingAlert
               setShowLiveAlert={setShowLiveAlert}
               setIsLiveStreamingOn={setIsLiveStreamingOn}
+              setShowMask={setShowMask}
+              openLive={openLive}
+              liveKey={liveKey}
+              url={url}
             />
           )}
-          {logInStatus && (
+          {isLoggedIn && (
             <DailyTaskReminder>你還未執行每日任務！</DailyTaskReminder>
           )}
-          {logInStatus && (
+          {isLoggedIn && (
             <Tabs onClick={(e) => tabSwitched(e.target.id)}>
-              <Tab id="task" bgColor={tabSelected.task}>
+              <Tab id="task" $bgColor={tabSelected.task}>
                 每日任務
               </Tab>
-              <Tab id="reels" bgColor={tabSelected.reels}>
+              <Tab id="reels" $bgColor={tabSelected.reels}>
                 Reels
               </Tab>
-              <Tab id="wishList" bgColor={tabSelected.wishList}>
+              <Tab id="wishList" $bgColor={tabSelected.wishList}>
                 心願清單
+              </Tab>
+              <Tab id="coupon" $bgColor={tabSelected.coupon}>
+                Coupon
               </Tab>
             </Tabs>
           )}
-          {logInStatus && tabSelected.task ? (
+          {isLoggedIn && tabSelected.task ? (
             <Game />
-          ) : logInStatus && tabSelected.reels ? (
+          ) : isLoggedIn && tabSelected.reels ? (
             <ReelsPanel>
               <ReelsLeft>
                 <FontAwesomeIcon icon={faAngleLeft} />
@@ -329,7 +452,7 @@ function Profile() {
                 <FontAwesomeIcon icon={faAngleRight} />
               </ReelsRight>
             </ReelsPanel>
-          ) : logInStatus && tabSelected.WishList ? (
+          ) : isLoggedIn && tabSelected.WishList ? (
             <WishList />
           ) : null}
         </UserMainColumn>

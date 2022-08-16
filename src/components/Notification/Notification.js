@@ -33,13 +33,13 @@ const Messages = styled.div`
   }
 `;
 
-function Notification({ switchSidebar }) {
+function Notification({ switchSidebar, notice }) {
   return (
     <Push display={switchSidebar["notification"]}>
-      <Messages>您被OOO追蹤中</Messages>
-      <Messages>您已完成取貨</Messages>
-      <Messages>您獲得了一張優待券</Messages>
-      <Messages>您追蹤的網紅正在直播</Messages>
+      {/* {notice &&
+        notice.map((msg) => {
+          return <Messages>test</Messages>;
+        })} */}
     </Push>
   );
 }

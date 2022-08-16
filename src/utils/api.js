@@ -1,6 +1,6 @@
 const api = {
   hostname: "https://api.appworks-school.tw/api/1.0",
-  hostname1: "https://domingoos.store/api/1.0",
+  hostname1: "https://www.domingoos.store/api/1.0",
   async getProducts(category, paging) {
     const response = await fetch(
       `${this.hostname1}/products/${category}?paging=${paging}`
@@ -8,7 +8,7 @@ const api = {
     return await response.json();
   },
   async getCampaigns() {
-    const response = await fetch(`${this.hostname}/marketing/campaigns`);
+    const response = await fetch(`${this.hostname1}/marketing/campaigns`);
     return await response.json();
   },
   async searchProducts(keyword, paging) {

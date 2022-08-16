@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import LogInContext from "../../contexts/LogInContext";
 import logo from "./logo.png";
 import search from "./search.png";
 import cart from "./cart.png";
@@ -253,6 +252,37 @@ const PageLink = styled(Link)`
   }
 `;
 
+const PageLinkDiv = styled.div`
+  @media screen and (max-width: 1279px) {
+    width: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  & + & {
+    ${"" /* margin-left: 42px; */}
+    margin-right: 15px;
+
+    @media screen and (max-width: 1279px) {
+      margin-left: 0;
+    }
+  }
+
+  & + &::before {
+    @media screen and (max-width: 1279px) {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 1px;
+      height: 24px;
+      background-color: #828282;
+    }
+  }
+`;
+
 const PageLinkIcon = styled.div`
   width: 44px;
   height: 44px;
@@ -272,9 +302,11 @@ const PageLinkCartIcon = styled(PageLinkIcon)`
 
 const PageLinkProfileIcon = styled(PageLinkIcon)`
   background-image: url(${profile});
+  margin-right: 15px;
 
   @media screen and (max-width: 1279px) {
     background-image: url(${profileMobile});
+    margin-right: 0px;
   }
 `;
 
@@ -315,15 +347,16 @@ const categories = [
   },
 ];
 
-function Header({ switchSidebar, setSwitchSidebar }) {
+function Header({ switchSidebar, setSwitchSidebar, isLoggedIn }) {
   const [inputValue, setInputValue] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
   const { getItems } = useContext(CartContext);
-  const { isLoggedIn } = useContext(LogInContext);
   const [mobileSearch, setMobileSearch] = useState("none");
-
+  let jwtToken = localStorage.getItem("jwtToken");
+  let user = JSON.parse(localStorage.getItem("user"));
+  const [searchType, setSearchType] = useState("product");
   function sidebarToggle(target) {
     let defaultCondition = { followList: "none", notification: "none" };
     if (switchSidebar[target] === "none") defaultCondition[target] = "block";
@@ -337,9 +370,31 @@ function Header({ switchSidebar, setSwitchSidebar }) {
     else if (mobileSearch === "block") setMobileSearch("none");
   }
 
+  function handleProfileClick() {
+    if (jwtToken) navigate(`/profile/${user.id}`);
+    else navigate("/login");
+  }
+
+  function handleSearchTypeChange(e) {
+    setSearchType(e.value);
+  }
+
   useEffect(() => {
     if (category) setInputValue("");
   }, [category]);
+
+  function handleSearchKeyPress() {
+    //讀取現在要搜尋的是哪個種類
+    let type = searchType;
+    if (type === "product") navigate(`/?keyword=${inputValue}`);
+    //account: 出現下拉式選單 show 照片/name -> <Link to='/profile/id'>
+  }
+
+  const fakeAccountData = [
+    { id: 110, name: "user1", picture: null },
+    { id: 220, name: "user2", picture: null },
+    { id: 330, name: "user3", picture: null },
+  ];
 
   return (
     <Wrapper>
@@ -362,19 +417,22 @@ function Header({ switchSidebar, setSwitchSidebar }) {
           </PageLinkCartIcon>
           <PageLinkText>購物車</PageLinkText>
         </PageLink>
-        <PageLink to="/profile">
-          <PageLinkProfileIcon icon={profile} />
+        <PageLinkDiv>
+          <PageLinkProfileIcon icon={profile} onClick={handleProfileClick} />
           <PageLinkText>會員</PageLinkText>
-        </PageLink>
+        </PageLinkDiv>
       </PageLinks>
       <TrackIcon icon={follow} onClick={() => sidebarToggle("followList")} />
       <BellIcon icon={bell} onClick={() => sidebarToggle("notification")}>
         {isLoggedIn && <BellIconAlert />}
       </BellIcon>
       <SearchWrapper>
-        <SearchSelect display={mobileSearch}>
-          <SearchSelectOption>商品</SearchSelectOption>
-          <SearchSelectOption>帳號</SearchSelectOption>
+        <SearchSelect
+          display={mobileSearch}
+          onChange={(e) => handleSearchTypeChange(e.target)}
+        >
+          <SearchSelectOption value="product">商品</SearchSelectOption>
+          <SearchSelectOption value="account">帳號</SearchSelectOption>
         </SearchSelect>
         <SearchInput
           display={mobileSearch}

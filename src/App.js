@@ -8,7 +8,6 @@ import Header from "./components/Header/Header";
 import FollowList from "./components/FollowList/FollowList";
 import Notification from "./components/Notification/Notification";
 import CartContext from "./contexts/CartContext";
-import LogInContext from "./contexts/LogInContext";
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
 import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
@@ -71,12 +70,12 @@ const GlobalStyle = createGlobalStyle`
 
 const Mask = styled.div`
   background-color: rgba(0, 0, 0, 0.7);
-  z-index: 999;
+  z-index: 100;
   width: 100vw;
   height: 100vh;
   position: fixed;
   top: 0;
-  display: ${(props) => (props.display ? "block" : "none")};
+  display: ${(props) => (props.show ? "block" : "none")};
 `;
 
 function App() {
@@ -84,19 +83,13 @@ function App() {
     followList: "none",
     notification: "none",
   });
+  const [followList, setFollowList] = useState();
+  const [notice, setNotice] = useState([]); //??
   const [showMask, setShowMask] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(
     Boolean(window.localStorage.getItem("jwtToken"))
   );
-
-  const changeLogInStatus = (status) => {
-    setIsLoggedIn(status);
-    return;
-  };
-  const logInController = {
-    isLoggedIn,
-    changeLogInStatus,
-  };
+  const [ws, setWs] = useState(null);
   const [cartItems, setCartItems] = useState(
     JSON.parse(window.localStorage.getItem("cartItems")) || []
   );
@@ -145,19 +138,32 @@ function App() {
 
   return (
     <CartContext.Provider value={cart}>
-      <LogInContext.Provider value={logInController}>
-        <Reset />
-        <GlobalStyle />
-        <Mask display={showMask}></Mask>
-        <Header
-          switchSidebar={switchSidebar}
-          setSwitchSidebar={setSwitchSidebar}
-        />
-        {isLoggedIn && <FollowList switchSidebar={switchSidebar} />}
-        {isLoggedIn && <Notification switchSidebar={switchSidebar} />}
-        <Outlet />
-        <Footer />
-      </LogInContext.Provider>
+      <Reset />
+      <GlobalStyle />
+      <Mask show={showMask}></Mask>
+      <Header
+        isLoggedIn={isLoggedIn}
+        switchSidebar={switchSidebar}
+        setSwitchSidebar={setSwitchSidebar}
+      />
+      {isLoggedIn && (
+        <FollowList switchSidebar={switchSidebar} followList={followList} />
+      )}
+      {isLoggedIn && (
+        <Notification switchSidebar={switchSidebar} notice={notice} />
+      )}
+      <Outlet
+        context={[
+          isLoggedIn,
+          setIsLoggedIn,
+          setShowMask,
+          ws,
+          setWs,
+          setFollowList,
+          setNotice,
+        ]}
+      />
+      <Footer />
     </CartContext.Provider>
   );
 }

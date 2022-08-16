@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import personhead from "./personhead.png";
+import { Link } from "react-router-dom";
 
 const Live = styled.div`
   z-index: 3;
@@ -20,11 +21,13 @@ const Live = styled.div`
   }
 `;
 
-const Person = styled.div`
+const Person = styled(Link)`
   display: flex;
   align-items: center;
   width: 15vw;
   padding-top: 30px;
+  text-decoration: none;
+  color: #000;
   @media screen and (max-width: 1279px) {
     width: 170px;
     padding-top: 20px;
@@ -32,13 +35,16 @@ const Person = styled.div`
 `;
 
 const PersonHead = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   margin-right: 10px;
   border-radius: 50%;
-  background-image: url(${personhead});
+  background-image: url(${(props) => (props.path ? props.path : personhead)});
   background-repeat: no-repeat;
   background-size: 100%;
+  box-shadow: 1px 1px 10px
+    ${(props) =>
+      props.status === 1 ? "rgba(5, 5, 5, .5)" : "rgba(0, 0, 0, 0)"};
   @media screen and (max-width: 1279px) {
     width: 30px;
     height: 30px;
@@ -67,26 +73,29 @@ const Tracked = styled.div`
   }
 `;
 
-function FollowList({ switchSidebar }) {
+function FollowList({ switchSidebar, followList }) {
+  const orderedFollowList =
+    followList &&
+    followList.map((person) => {
+      return (
+        <Person key={person.id}>
+          <PersonHead path={person.picture} status={person.status} />
+          <PersonName>{person.name}</PersonName>
+        </Person>
+      );
+    });
   return (
     <Live display={switchSidebar["followList"]}>
       <Tracked>追蹤名單</Tracked>
-      <Person>
-        <PersonHead />
-        <PersonName>周杰倫</PersonName>
-      </Person>
-      <Person>
-        <PersonHead />
-        <PersonName>蔡依林</PersonName>
-      </Person>
-      <Person>
-        <PersonHead />
-        <PersonName>告五人</PersonName>
-      </Person>
-      <Person>
-        <PersonHead />
-        <PersonName>美秀姐</PersonName>
-      </Person>
+      {followList &&
+        followList.map((person) => {
+          return (
+            <Person key={person.follow_id} to={`/profile/${person.follow_id}`}>
+              <PersonHead path={person.picture} />
+              <PersonName>{person.name}</PersonName>
+            </Person>
+          );
+        })}
     </Live>
   );
 }

@@ -9,7 +9,7 @@ const LiveStreamingAlertWrapper = styled.div`
   align-self: center;
   margin-top: 100px;
   position: fixed;
-  z-index: 5;
+  z-index: 101;
   background-color: #fff;
   border: 1px solid #e27d60;
   border-radius: 10px;
@@ -176,10 +176,18 @@ const LiveStreamInfo = styled.p`
   margin: 50px 0px;
 `;
 
-function LiveStreamingAlert({ setShowLiveAlert, setIsLiveStreamingOn }) {
+function LiveStreamingAlert({
+  setShowLiveAlert,
+  setIsLiveStreamingOn,
+  setShowMask,
+  openLive,
+  liveKey,
+  url,
+}) {
   const [inputValue, setInputValue] = useState("");
   const [searchResults, setSearchResults] = useState();
   const [liveStreamProductList, setLiveStreamProductList] = useState([]);
+  const [liveStreamProductIdList, setLiveStreamProductIdList] = useState([]);
   const [step, setStep] = useState(0);
   async function searchLiveStreamProduct() {
     let { data } = await api.searchProducts(inputValue, 0);
@@ -191,22 +199,37 @@ function LiveStreamingAlert({ setShowLiveAlert, setIsLiveStreamingOn }) {
       (result) => result.id === Number(productId)
     );
     let currentList = [...liveStreamProductList];
+    let currentIdList = [...liveStreamProductIdList];
     let productListItem = { id: product.id, name: product.title };
     currentList.unshift(productListItem);
+    currentIdList.unshift(product.id);
     setLiveStreamProductList(currentList);
+  }
+  function prepareLive() {
+    let data = [];
+    liveStreamProductList.forEach((item) => {
+      data.push(item.id);
+    });
+    console.log(data);
+    openLive(data);
   }
 
   return (
     <LiveStreamingAlertWrapper>
-      <AlertCloseBtn onClick={() => setShowLiveAlert(false)}>X</AlertCloseBtn>
+      <AlertCloseBtn
+        onClick={() => {
+          setShowLiveAlert(false);
+          setShowMask(false);
+        }}
+      >
+        X
+      </AlertCloseBtn>
       {step === 0 ? (
         <>
           <AlertTitle>直播準備</AlertTitle>
-          <AlertDesc>
-            開始直播前請準備好串流軟體，在軟體中輸入連線地址與密鑰
-          </AlertDesc>
-          <LiveStreamInfo>連線地址</LiveStreamInfo>
-          <LiveStreamInfo>串流金鑰</LiveStreamInfo>
+          <AlertDesc>請準備好串流軟體，在軟體中輸入連線地址與密鑰</AlertDesc>
+          <LiveStreamInfo>{url}</LiveStreamInfo>
+          <LiveStreamInfo>{liveKey}</LiveStreamInfo>
           <NextStepBtn onClick={() => setStep(1)}>下一步</NextStepBtn>
         </>
       ) : null}
@@ -259,7 +282,6 @@ function LiveStreamingAlert({ setShowLiveAlert, setIsLiveStreamingOn }) {
               </LiveStreamingSearchReminder>
             )}
           </LiveStreamingSearchResults>
-
           <LiveStreamingProductList>
             <LiveStreamingListTitle>介紹商品清單</LiveStreamingListTitle>
             {liveStreamProductList.map((item) => {
@@ -283,6 +305,8 @@ function LiveStreamingAlert({ setShowLiveAlert, setIsLiveStreamingOn }) {
             onClick={() => {
               setIsLiveStreamingOn(true);
               setShowLiveAlert(false);
+              setShowMask(false);
+              prepareLive();
             }}
           >
             準備好了！
