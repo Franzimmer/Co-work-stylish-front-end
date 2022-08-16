@@ -10,6 +10,8 @@ import profileMobile from "./profile-mobile.png";
 import CartContext from "../../contexts/CartContext";
 import follow from "./follower.png";
 import bell from "./bell.png";
+import personhead from "./personhead.png";
+import api from "../../utils/api";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -29,10 +31,8 @@ const Wrapper = styled.div`
     height: 52px;
     padding: 0;
     border: none;
-    justify-content: center;
   }
 `;
-
 const Logo = styled(Link)`
   width: 230px;
   height: 48px;
@@ -44,10 +44,9 @@ const Logo = styled(Link)`
   @media screen and (max-width: 1279px) {
     width: 129px;
     height: 24px;
-    margin-top: 0px;
+    margin: 0px 0px 0px 25px;
   }
 `;
-
 const CategoryLinks = styled.div`
   margin: 16px 0 0 20px;
 
@@ -62,7 +61,6 @@ const CategoryLinks = styled.div`
     background-color: #313538;
   }
 `;
-
 const CategoryLink = styled(Link)`
   font-size: 20px;
   letter-spacing: 30px;
@@ -111,9 +109,9 @@ const SearchWrapper = styled.div`
 `;
 const SearchInput = styled.input`
   width: 280px;
+  height: 44px;
   border: none;
   outline: none;
-  height: 44px;
   border: solid 1px #979797;
   color: #8b572a;
   border-radius: 20px;
@@ -133,7 +131,6 @@ const SearchInput = styled.input`
     top: -22px;
   }
 `;
-
 const SerachIcon = styled.div`
   background-image: url(${search});
   width: 44px;
@@ -146,7 +143,6 @@ const SerachIcon = styled.div`
     right: 10px;
   }
 `;
-
 const SearchSelect = styled.select`
   width: 70px;
   height: 44px;
@@ -164,7 +160,52 @@ const SearchSelect = styled.select`
   }
 `;
 const SearchSelectOption = styled.option``;
-
+const UserSearchResults = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  background-color: #ffdbd1;
+  padding: 10px;
+  @media screen and (max-width: 1279px) {
+    width: calc(100% - 30px);
+    top: 26px;
+    left: 20px;
+  }
+`;
+const UserSearchResultsCloseBtn = styled.button`
+  display: inline-block;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+  background-color: #eee;
+  border: 1px solid #aaa;
+  align-self: flex-end;
+  position: absolute;
+`;
+const UserSearchResult = styled(Link)`
+  display: flex;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+  width: 100%;
+  margin-bottom: 10px;
+  &:not(:last-child) {
+    border-bottom: 1px dashed #e27d60;
+  }
+`;
+const UserSearchResultPicture = styled.img`
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+`;
+const UserSearchResultName = styled.div`
+  border-radius: 50%;
+`;
 const TrackIcon = styled.div`
   margin-right: 15px;
   background-image: url(${follow});
@@ -176,9 +217,9 @@ const TrackIcon = styled.div`
   @media screen and (max-width: 1279px) {
     position: fixed;
     right: 120px;
+    margin-right: 0px;
   }
 `;
-
 const BellIcon = styled.div`
   margin-right: 20px;
   background-image: url(${bell});
@@ -192,7 +233,6 @@ const BellIcon = styled.div`
     right: 50px;
   }
 `;
-
 const BellIconAlert = styled.div`
   width: 15px;
   height: 15px;
@@ -202,7 +242,6 @@ const BellIconAlert = styled.div`
   bottom: 0px;
   right: 0px;
 `;
-
 const PageLinks = styled.div`
   margin-left: auto;
   display: flex;
@@ -220,7 +259,6 @@ const PageLinks = styled.div`
     background-color: #313538;
   }
 `;
-
 const PageLink = styled(Link)`
   @media screen and (max-width: 1279px) {
     width: 50%;
@@ -251,7 +289,6 @@ const PageLink = styled(Link)`
     }
   }
 `;
-
 const PageLinkDiv = styled.div`
   @media screen and (max-width: 1279px) {
     width: 50%;
@@ -263,9 +300,6 @@ const PageLinkDiv = styled.div`
   }
 
   & + & {
-    ${"" /* margin-left: 42px; */}
-    margin-right: 15px;
-
     @media screen and (max-width: 1279px) {
       margin-left: 0;
     }
@@ -282,7 +316,6 @@ const PageLinkDiv = styled.div`
     }
   }
 `;
-
 const PageLinkIcon = styled.div`
   width: 44px;
   height: 44px;
@@ -290,7 +323,6 @@ const PageLinkIcon = styled.div`
   background-size: contain;
   position: relative;
 `;
-
 const PageLinkCartIcon = styled(PageLinkIcon)`
   margin-right: 15px;
   background-image: url(${cart});
@@ -299,7 +331,6 @@ const PageLinkCartIcon = styled(PageLinkIcon)`
     background-image: url(${cartMobile});
   }
 `;
-
 const PageLinkProfileIcon = styled(PageLinkIcon)`
   background-image: url(${profile});
   margin-right: 15px;
@@ -309,7 +340,6 @@ const PageLinkProfileIcon = styled(PageLinkIcon)`
     margin-right: 0px;
   }
 `;
-
 const PageLinkIconNumber = styled.div`
   position: absolute;
   bottom: 0;
@@ -322,7 +352,6 @@ const PageLinkIconNumber = styled.div`
   text-align: center;
   line-height: 24px;
 `;
-
 const PageLinkText = styled.div`
   display: none;
 
@@ -331,7 +360,6 @@ const PageLinkText = styled.div`
     color: white;
   }
 `;
-
 const categories = [
   {
     name: "women",
@@ -383,18 +411,20 @@ function Header({ switchSidebar, setSwitchSidebar, isLoggedIn }) {
     if (category) setInputValue("");
   }, [category]);
 
-  function handleSearchKeyPress() {
-    //讀取現在要搜尋的是哪個種類
+  const [searchUserData, setSearchUserData] = useState();
+
+  async function handleSearchKeyPress() {
     let type = searchType;
     if (type === "product") navigate(`/?keyword=${inputValue}`);
-    //account: 出現下拉式選單 show 照片/name -> <Link to='/profile/id'>
+    else if (type === "account") {
+      const { data } = await api.searchUsers(inputValue);
+      setSearchUserData(data);
+    }
   }
 
-  const fakeAccountData = [
-    { id: 110, name: "user1", picture: null },
-    { id: 220, name: "user2", picture: null },
-    { id: 330, name: "user3", picture: null },
-  ];
+  function logInReminder() {
+    if (!isLoggedIn) alert("請先登入！");
+  }
 
   return (
     <Wrapper>
@@ -417,13 +447,25 @@ function Header({ switchSidebar, setSwitchSidebar, isLoggedIn }) {
           </PageLinkCartIcon>
           <PageLinkText>購物車</PageLinkText>
         </PageLink>
-        <PageLinkDiv>
-          <PageLinkProfileIcon icon={profile} onClick={handleProfileClick} />
+        <PageLinkDiv onClick={handleProfileClick}>
+          <PageLinkProfileIcon icon={profile} />
           <PageLinkText>會員</PageLinkText>
         </PageLinkDiv>
       </PageLinks>
-      <TrackIcon icon={follow} onClick={() => sidebarToggle("followList")} />
-      <BellIcon icon={bell} onClick={() => sidebarToggle("notification")}>
+      <TrackIcon
+        icon={follow}
+        onClick={() => {
+          sidebarToggle("followList");
+          logInReminder();
+        }}
+      />
+      <BellIcon
+        icon={bell}
+        onClick={() => {
+          sidebarToggle("notification");
+          logInReminder();
+        }}
+      >
         {isLoggedIn && <BellIconAlert />}
       </BellIcon>
       <SearchWrapper>
@@ -438,13 +480,38 @@ function Header({ switchSidebar, setSwitchSidebar, isLoggedIn }) {
           display={mobileSearch}
           onKeyPress={(e) => {
             if (e.key === "Enter") {
-              navigate(`/?keyword=${inputValue}`);
+              handleSearchKeyPress();
             }
           }}
           onChange={(e) => setInputValue(e.target.value)}
           value={inputValue}
         ></SearchInput>
         <SerachIcon onClick={mobileSearchToggle} />
+        {searchUserData && (
+          <UserSearchResults>
+            <UserSearchResultsCloseBtn
+              onClick={() => {
+                setSearchUserData();
+                setInputValue("");
+              }}
+            >
+              x
+            </UserSearchResultsCloseBtn>
+            {searchUserData &&
+              searchUserData.map((user) => {
+                return (
+                  <UserSearchResult
+                    key={user.id}
+                    to={`/profile/${user.id}`}
+                    onClick={() => setSearchUserData()}
+                  >
+                    <UserSearchResultPicture src={user.picture || personhead} />
+                    <UserSearchResultName>{user.name}</UserSearchResultName>
+                  </UserSearchResult>
+                );
+              })}
+          </UserSearchResults>
+        )}
       </SearchWrapper>
     </Wrapper>
   );

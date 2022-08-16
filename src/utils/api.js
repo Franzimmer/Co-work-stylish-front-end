@@ -52,6 +52,16 @@ const api = {
     });
     return await response.json();
   },
+  async searchUsers(keyword) {
+    const response = await fetch(
+      `${this.hostname1}/user/search?keyword=${keyword}`
+    );
+    return await response.json();
+  },
+  async getProfile(id) {
+    const response = await fetch(`${this.hostname1}/user/${id}/info`);
+    return await response.json();
+  },
 };
 
 export default api;

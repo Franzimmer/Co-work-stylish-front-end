@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import LiveStreamingAlert from "./LiveStreamingAlert";
 import io from "socket.io-client";
+import api from "../../utils/api";
 import personhead from "./personhead.png";
 const Wrapper = styled.div`
   display: flex;
@@ -17,71 +18,51 @@ const UserMainColumn = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-self: ${(props) => (props.position ? null : "center")};
 `;
 const UserWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   background-color: #f3efef;
   width: 100%;
-  position: relative;
-  height: 18vh;
+  height: 200px;
 `;
 const UserInfoWrapper = styled.div`
+  width: 80%;
+  height: 50%;
   display: flex;
-  flex-direction: column;
-  position: absolute;
-  bottom: 20px;
-  left: 400px;
-
+  align-items: center;
+  & * {
+    margin-right: 20px;
+  }
   @media (max-width: 1279px) {
-    margin-top: 20px;
-    left: 130px;
-    bottom: 15px;
+    width: 100%;
+    & * {
+      margin-right: 10px;
+    }
   }
 `;
 const Photo = styled.img`
-  margin-top: 50px;
   border-radius: 50%;
   width: 150px;
-  position: absolute;
-  left: 200px;
-  bottom: -35px;
 
   @media (max-width: 1279px) {
     width: 90px;
-    margin-top: 20px;
-    left: 30px;
-    bottom: 10px;
   }
 `;
 const Name = styled.div`
   font-size: 24px;
   font-weight: 500;
-  margin-top: 40px;
+  white-space: nowrap;
 
   @media (max-width: 1279px) {
-    font-size: 20px;
-  }
-`;
-const Mail = styled.div`
-  margin-top: 10px;
-  color: #999;
-  @media (max-width: 1279px) {
-    font-size: 14px;
+    font-size: 18px;
   }
 `;
 const Followers = styled.div`
   display: flex;
   flex-direction: column;
-  position: absolute;
-  bottom: 20px;
-  left: 580px;
   @media (max-width: 1279px) {
-    margin-top: 20px;
-    left: 280px;
-    bottom: 15px;
   }
 `;
 const FollowersTitle = styled.div`
@@ -89,7 +70,8 @@ const FollowersTitle = styled.div`
   font-size: 20px;
   margin-bottom: 10px;
   @media (max-width: 1279px) {
-    font-size: 16px;
+    font-size: 14px;
+    margin-bottom: 5px;
   }
 `;
 const FollowersNumbers = styled.div`
@@ -105,13 +87,14 @@ const Button = styled.button`
   letter-spacing: 1px;
   margin: 10px 20px 10px 0px;
   padding: 5px 20px;
+  height: 100%;
   border-radius: 5px;
-  position: absolute;
-  bottom: 20px;
   cursor: pointer;
   white-space: nowrap;
   @media (max-width: 1279px) {
-    padding: 5px;
+    font-size: 12px;
+    padding: 3px 5px;
+    margin: 0px 0px 5px 0px;
   }
 `;
 const ButtonWrapper = styled.div`
@@ -124,38 +107,10 @@ const ButtonWrapper = styled.div`
 const LiveButton = styled(Button)`
   background-color: #e27d60;
   border: 1px solid #e27d60;
-  left: 700px;
-  bottom: 50px;
-
-  @media (min-width: 600px) and (max-width: 1279px) {
-    margin-top: 20px;
-    left: 380px;
-    bottom: 20px;
-  }
-
-  @media (max-width: 599px) {
-    margin-top: 20px;
-    left: 250px;
-    bottom: 60px;
-  }
 `;
 const LogoutButton = styled(Button)`
   background-color: #8b572a;
   border: 1px solid #8b572a;
-  left: 700px;
-  bottom: 10px;
-
-  @media (min-width: 600px) and (max-width: 1279px) {
-    margin-top: 20px;
-    left: 450px;
-    bottom: 20px;
-  }
-
-  @media (max-width: 599px) {
-    margin-top: 20px;
-    left: 310px;
-    bottom: 60px;
-  }
 `;
 const DailyTaskReminder = styled.div`
   color: #8b572a;
@@ -170,8 +125,8 @@ const DailyTaskReminder = styled.div`
   }
 `;
 const Tabs = styled.div`
-  border-bottom: 4px solid #f3efef;
-  height: 8vh;
+  border-bottom: 10px solid #f3efef;
+  height: 80px;
   width: 80%;
   margin: 0px auto 0px auto;
   display: flex;
@@ -182,11 +137,18 @@ const Tab = styled.div`
   color: #8b572a;
   border-radius: 5px 5px 0px 0px;
   border: 3px solid #f3efef;
-  margin: calc(8vh - 30px) 15px 0px 0px;
+  margin: 45px 15px 0px 0px;
   padding: 0px 10px;
   cursor: pointer;
   background-color: ${(props) => (props.$bgColor ? "#f3efef" : "none")};
   white-space: nowrap;
+  @media (max-width: 1279px) {
+    font-size: 14px;
+    height: 20px;
+    line-height: 20px;
+    margin-right: 5px;
+    padding: 0px 5px;
+  }
 `;
 //再寫成獨立組件
 const Game = styled.div`
@@ -234,10 +196,8 @@ const WishList = styled.div`
 `;
 
 function Profile() {
-  const [profile, setProfile] = useState(
-    JSON.parse(window.localStorage.getItem("user"))
-  );
-  // const { id } = useParams();
+  const { id } = useParams();
+  const [profile, setProfile] = useState();
   let navigate = useNavigate();
   const [
     isLoggedIn,
@@ -333,6 +293,15 @@ function Profile() {
   };
 
   useEffect(() => {
+    async function getProfile() {
+      const { data } = await api.getProfile(id);
+      console.log(data);
+      setProfile(data);
+    }
+    getProfile();
+  }, [id]);
+
+  useEffect(() => {
     if (isLoggedIn) {
       setWs(
         io("https://domingoos.store", {
@@ -366,47 +335,45 @@ function Profile() {
         <UserMainColumn position={isLoggedIn}>
           {isLoggedIn && profile && (
             <UserWrapper>
-              <Photo src={profile.picture || personhead} />
               <UserInfoWrapper>
+                <Photo src={profile.picture || personhead} />
                 <Name>{profile.name}</Name>
-                <Mail>{profile.email}</Mail>
+                <Followers>
+                  <FollowersTitle>粉絲數量</FollowersTitle>
+                  <FollowersNumbers>{profile.follower_count}</FollowersNumbers>
+                </Followers>
+                <ButtonWrapper>
+                  {profile.role_id[0] === 3 && !isLiveStreamingOn ? (
+                    <LiveButton
+                      onClick={() => {
+                        authLive();
+                      }}
+                    >
+                      直播
+                    </LiveButton>
+                  ) : (
+                    <LiveButton
+                      onClick={() => {
+                        closeLive();
+                        setIsLiveStreamingOn(false);
+                      }}
+                    >
+                      結束直播
+                    </LiveButton>
+                  )}
+                  <LogoutButton
+                    onClick={() => {
+                      window.localStorage.removeItem("jwtToken");
+                      window.localStorage.removeItem("user");
+                      setIsLoggedIn(false);
+                      disconnectWs();
+                      navigate("/login");
+                    }}
+                  >
+                    登出
+                  </LogoutButton>
+                </ButtonWrapper>
               </UserInfoWrapper>
-              <Followers>
-                <FollowersTitle>粉絲數量</FollowersTitle>
-                <FollowersNumbers>209</FollowersNumbers>
-              </Followers>
-              <ButtonWrapper>
-                {!isLiveStreamingOn ? (
-                  <LiveButton
-                    onClick={() => {
-                      authLive();
-                    }}
-                  >
-                    直播
-                  </LiveButton>
-                ) : (
-                  <LiveButton
-                    onClick={() => {
-                      closeLive();
-                      setIsLiveStreamingOn(false);
-                    }}
-                  >
-                    {" "}
-                    結束直播{" "}
-                  </LiveButton>
-                )}
-                <LogoutButton
-                  onClick={() => {
-                    window.localStorage.removeItem("jwtToken");
-                    window.localStorage.removeItem("user");
-                    setIsLoggedIn(false);
-                    disconnectWs();
-                    navigate("/login");
-                  }}
-                >
-                  登出
-                </LogoutButton>
-              </ButtonWrapper>
             </UserWrapper>
           )}
           {showLiveAlert && (

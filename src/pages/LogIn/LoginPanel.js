@@ -14,6 +14,10 @@ const LoginPanel = styled.div`
   display: flex;
   flex-direction: row;
   margin: auto;
+  @media screen and (max-width: 1279px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 const NativeLogInWrapper = styled.div`
   display: flex;
@@ -22,6 +26,10 @@ const NativeLogInWrapper = styled.div`
   margin-right: 40px;
   border-right: 1px solid #8b572a;
   padding-right: 10px;
+  @media screen and (max-width: 1279px) {
+    margin: 0px auto 40px auto;
+    border-right: none;
+  }
 `;
 const SwitchWrapper = styled.div`
   display: flex;
