@@ -69,12 +69,28 @@ const Price = styled.div`
   color: #3f3a3a;
   padding-bottom: 20px;
   border-bottom: 1px solid #3f3a3a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   @media screen and (max-width: 1279px) {
     line-height: 24px;
     margin-top: 20px;
     font-size: 20px;
     padding-bottom: 10px;
+  }
+`;
+
+const AddWishList = styled.div`
+  display: flex;
+  font-size: 18px;
+  background: #f3efef;
+  border-radius: 10px;
+  padding: 0px 10px;
+  cursor: pointer;
+  letter-spacing: 1.2px;
+  &:hover {
+    color: #8b572a;
   }
 `;
 
@@ -193,6 +209,8 @@ const Image = styled.img`
 function Product() {
   const [product, setProduct] = useState();
   const { id } = useParams();
+  //抓出JWT
+  const jwtToken = localStorage.getItem('jwtToken');
 
   useEffect(() => {
     async function getProduct() {
@@ -204,13 +222,34 @@ function Product() {
 
   if (!product) return null;
 
+  console.log(id);
+
+  // ＝＝＝＝＝＝＝＝＝＝＝＝加入心願清單＝＝＝＝＝＝＝＝＝＝＝＝
+
+  function addWishProduct() {
+    fetch(`https://www.domingoos.store/api/1.0/user/10250/like/${id}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => console.log(res));
+  }
+
+  // ＝＝＝＝＝＝＝＝＝＝＝＝加入心願清單＝＝＝＝＝＝＝＝＝＝＝＝
+
   return (
     <Wrapper>
       <MainImage src={product.main_image} />
       <Details>
         <Title>{product.title}</Title>
         <ID>{product.id}</ID>
-        <Price>TWD.{product.price}</Price>
+        <Price>
+          TWD.{product.price}
+          <AddWishList onClick={addWishProduct}>加入心願清單</AddWishList>
+        </Price>
         <ProductVariants product={product} />
         <Note>{product.note}</Note>
         <Texture>{product.texture}</Texture>

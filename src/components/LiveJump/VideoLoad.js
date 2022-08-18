@@ -1,7 +1,8 @@
-import { useState } from "react";
-import styled from "styled-components";
-import ReactHlsPlayer from "react-hls-player";
-import React from "react";
+import { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import ReactHlsPlayer from 'react-hls-player';
+import React from 'react';
+import preloadPic1 from './preloadPic1.jpg';
 
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝影片區＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
@@ -42,7 +43,7 @@ const Video = styled.div`
   left: 5vw;
   right: 5vw;
   z-index: 50;
-  max-width: 1700px;
+  max-width: 1500px;
   margin: 0 auto;
 `;
 
@@ -63,6 +64,18 @@ const VideoLive = styled.div`
   border-radius: 50%;
   margin-left: 8px;
   margin-top: 4px;
+  animation: live 1s linear infinite;
+  @keyframes live {
+    0% {
+      opacity: 100%;
+    }
+    50% {
+      opacity: 30%;
+    }
+    100% {
+      opacity: 100%;
+    }
+  }
 `;
 
 const VideoName = styled.div`
@@ -70,14 +83,17 @@ const VideoName = styled.div`
   display: flex;
 `;
 
+const VideoItSelf = styled.div`
+  poaition: relative;
+`;
+
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝影片區＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 const VideoLoad = (props) => {
-  let url =
-    props.videoUrl || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
-  const [hlsUrl, setHlsUrl] = useState(
-    "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-  );
+  let url = props.videoUrl || 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+  const [hlsUrl, setHlsUrl] = useState(url);
+  const playerRef = useRef();
+  const [play, setPlay] = useState();
 
   return (
     <div>
@@ -92,13 +108,17 @@ const VideoLoad = (props) => {
           </StopVideoOutside>
           <StopVideoWord>離開</StopVideoWord>
         </StopVideoRange>
-        <ReactHlsPlayer
-          src={hlsUrl}
-          autoPlay={true}
-          controls={true}
-          width="100%"
-          height="auto"
-        />
+        <VideoItSelf>
+          <ReactHlsPlayer
+            playerRef={playerRef}
+            src={hlsUrl}
+            controls={true}
+            width="100%"
+            height="auto"
+            autoPlay={true}
+            poster={preloadPic1}
+          />
+        </VideoItSelf>
         <VideoInput>
           <VideoName>
             {props.name}的直播頁面

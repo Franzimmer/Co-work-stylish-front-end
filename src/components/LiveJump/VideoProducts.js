@@ -1,31 +1,33 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import VideoVariants from "./VideoVariants";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import VideoVariants from './VideoVariants';
 
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝選購清單＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 const Introduce = styled.div`
+  margin: 0 auto;
   overflow: auto;
   height: 650px;
   padding: 0px 20px;
   z-index: 80;
-  width: 90%;
+  width: 75%;
   position: fixed;
   left: 5vw;
   right: 5vw;
-  top: 1050px;
+  top: 930px;
 `;
 
 const IntroduceProduct = styled.div`
-  margin-top: 10px;
+  margin-top: 7px;
   width: 100%;
-  background: #f7e8e6;
+  background: #f3efef;
   border: 3px solid white;
   display: flex;
   justify-content: space-around;
   border-radius: 8px;
   align-items: center;
-  padding: 15px 30px;
+  padding: 7px 15px;
   @media screen and (max-width: 1279px) {
     flex-direction: column;
   }
@@ -43,6 +45,7 @@ const ProductName = styled.div`
     font-size: 20px;
     margin-top: 10px;
     width: auto;
+    margin-left: 0px;
   }
 `;
 
@@ -70,7 +73,11 @@ const ProductPicture = styled.img`
   background-position: center;
   background-size: 100%;
   display: block;
+
   margin-left: 40px;
+  @media screen and (max-width: 1279px) {
+    margin: 0 auto;
+  }
 `;
 
 const ProductAdd = styled.div`
@@ -134,7 +141,7 @@ const ProductPics = styled.div`
 `;
 
 const ProductPicOneOutside = styled.div`
-  width: 300px;
+  width: 250px;
   @media screen and (max-width: 1279px) {
     width: 100px;
   }
@@ -143,16 +150,17 @@ const ProductPicOne = styled.img`
   background-size: 100%;
   background-repeat: no-repeat;
   background-position: center;
-  height: 300px;
+  height: 250px;
   display: block;
   border-radius: 10px;
   @media screen and (max-width: 1279px) {
     height: 100px;
+    margin: 0 auto;
   }
 `;
 
 const ProductDetailContent = styled.div`
-  margin-left: 35px;
+  margin-left: 10px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -161,40 +169,47 @@ const ProductDetailContent = styled.div`
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝選購細節＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 const VideoProducts = () => {
+  //抓取現在是誰
+  const paramId = useParams().id;
+  let userId = JSON.parse(localStorage.getItem('user'))?.id;
   //================關閉或開啟商品細部項目================
-  const [closeProduct, setCloseProduct] = useState("none");
+  const [closeProduct, setCloseProduct] = useState('none');
 
   const ProductDetailRange = styled.div`
     background-color: #fff5ee;
     border-radius: 18px;
-    padding: 25px;
+    padding: 15px;
     display: ${closeProduct};
   `;
 
   function closeProductDetail() {
-    setCloseProduct("none");
+    setCloseProduct('none');
   }
 
   function openProductDetail() {
-    setCloseProduct("block");
+    setCloseProduct('block');
   }
 
   //================抓取直播主選的要推廣商品================
   const [product, setProduct] = useState();
 
+  // https://api.appworks-school.tw/api/1.0/products/women
+  // https://www.domingoos.store/api/1.0/user/10259/live-products
+
   useEffect(() => {
-    fetch("https://api.appworks-school.tw/api/1.0/products/women")
+    getVideoProducts();
+  }, []);
+
+  function getVideoProducts() {
+    fetch(`https://www.domingoos.store/api/1.0/user/${paramId}/live-products`)
       .then((res) => res.json())
-      .then(
-        (result) => {
-          setProduct(result.data);
-          console.log(result.data);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }, []); //空陣列預防infinite loop
+      .then((data) => {
+        setProduct(data.data);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  console.log(product);
 
   if (!product) return null;
 
@@ -214,9 +229,7 @@ const VideoProducts = () => {
             <ProductDetail>
               <StopProductDetailOutsideRange>
                 <StopProductDetailOutside>
-                  <StopProductDetail onClick={closeProductDetail}>
-                    X
-                  </StopProductDetail>
+                  <StopProductDetail onClick={closeProductDetail}>X</StopProductDetail>
                 </StopProductDetailOutside>
               </StopProductDetailOutsideRange>
               <ProductPics>

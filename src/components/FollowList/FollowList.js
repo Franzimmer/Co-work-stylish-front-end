@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import personhead from "./personhead.png";
-import { Link } from "react-router-dom";
+import styled from 'styled-components';
+import personhead from './personhead.png';
+import { Link } from 'react-router-dom';
 
 const Live = styled.div`
   z-index: 3;
@@ -42,9 +42,9 @@ const PersonHead = styled.div`
   background-image: url(${(props) => (props.path ? props.path : personhead)});
   background-repeat: no-repeat;
   background-size: 100%;
-  box-shadow: 1px 1px 10px
-    ${(props) =>
-      props.$status === 1 ? "rgba(255, 96, 96, 1)" : "rgba(0, 0, 0, 0)"};
+
+  box-shadow: 1px 1px 10px ${(props) => (props.$status === 1 ? 'rgba(255, 96, 96, 1)' : 'rgba(0, 0, 0, 0)')};
+
   @media screen and (max-width: 1279px) {
     width: 30px;
     height: 30px;
@@ -85,7 +85,7 @@ function FollowList({ switchSidebar, followList }) {
   //     );
   //   });
   return (
-    <Live display={switchSidebar["followList"]}>
+    <Live display={switchSidebar['followList']}>
       <Tracked>追蹤名單</Tracked>
       {followList &&
         followList.map((person) => {

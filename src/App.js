@@ -1,17 +1,24 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import { Reset } from "styled-reset";
-import styled from "styled-components";
-import Footer from "./components/Footer/Footer";
-import Header from "./components/Header/Header";
-import FollowList from "./components/FollowList/FollowList";
-import Notification from "./components/Notification/Notification";
-import CartContext from "./contexts/CartContext";
-import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
-import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
-import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
-import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
+import { useState, useRef } from 'react';
+import { Outlet } from 'react-router-dom';
+import { createGlobalStyle } from 'styled-components';
+import { Reset } from 'styled-reset';
+import styled from 'styled-components';
+import Footer from './components/Footer/Footer';
+import Header from './components/Header/Header';
+import FollowList from './components/FollowList/FollowList';
+import Notification from './components/Notification/Notification';
+import CartContext from './contexts/CartContext';
+import PingFangTCRegular from './fonts/PingFang-TC-Regular-2.otf';
+import PingFangTCThin from './fonts/PingFang-TC-Thin-2.otf';
+import NotoSansTCRegular from './fonts/NotoSansTC-Regular.otf';
+import NotoSansTCBold from './fonts/NotoSansTC-Bold.otf';
+
+//聲音
+import ReactAudioPlayer from 'react-audio-player';
+import cheers from './cheers.aac';
+
+//煙火影片
+import fireworks from './fireworks.mov';
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -75,32 +82,39 @@ const Mask = styled.div`
   height: 100vh;
   position: fixed;
   top: 0;
-  display: ${(props) => (props.show ? "block" : "none")};
+  display: ${(props) => (props.show ? 'block' : 'none')};
+`;
+
+const Celebrate = styled.div`
+  z-index: 300;
 `;
 
 function App() {
+  //加入聲音
+  const audioRef = useRef(null);
+  //加入煙火
+  const videoRef = useRef(null);
+
   const [switchSidebar, setSwitchSidebar] = useState({
-    followList: "none",
-    notification: "none",
+    followList: 'none',
+    notification: 'none',
   });
   const [followList, setFollowList] = useState();
   const [notice, setNotice] = useState([]);
   const [showMask, setShowMask] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    Boolean(window.localStorage.getItem("jwtToken"))
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(window.localStorage.getItem('jwtToken')));
   const [ws, setWs] = useState(null);
-  const [cartItems, setCartItems] = useState(
-    JSON.parse(window.localStorage.getItem("cartItems")) || []
-  );
+  const [cartItems, setCartItems] = useState(JSON.parse(window.localStorage.getItem('cartItems')) || []);
   function getItems() {
     return cartItems;
   }
   function addItem(item) {
     const newCartItems = [...cartItems, item];
     setCartItems(newCartItems);
-    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
-    window.alert("已加入商品");
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    audioRef.current.audioEl.current.play();
+    window.alert('已加入商品');
+    videoRef.current.videoEl.current.play();
   }
   function changeItemQuantity(itemIndex, itemQuantity) {
     const newCartItems = cartItems.map((item, index) =>
@@ -112,20 +126,20 @@ function App() {
         : item
     );
     setCartItems(newCartItems);
-    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
-    window.alert("已修改數量");
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    window.alert('已修改數量');
   }
   function deleteItem(itemIndex) {
     const newCartItems = cartItems.filter((_, index) => index !== itemIndex);
     setCartItems(newCartItems);
-    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
-    window.alert("已刪除商品");
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+    window.alert('已刪除商品');
   }
 
   function clearItems() {
     const newCartItems = [];
     setCartItems(newCartItems);
-    window.localStorage.setItem("cartItems", JSON.stringify(newCartItems));
+    window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
   }
 
   const cart = {
@@ -140,34 +154,18 @@ function App() {
     <CartContext.Provider value={cart}>
       <Reset />
       <GlobalStyle />
+      <ReactAudioPlayer src={cheers} autoPlay={false} ref={audioRef} />
       <Mask show={showMask}></Mask>
-      <Header
-        isLoggedIn={isLoggedIn}
-        switchSidebar={switchSidebar}
-        setSwitchSidebar={setSwitchSidebar}
-      />
-      {isLoggedIn && (
-        <FollowList switchSidebar={switchSidebar} followList={followList} />
-      )}
-      {isLoggedIn && (
-        <Notification
-          switchSidebar={switchSidebar}
-          notice={notice}
-          setNotice={setNotice}
-        />
-      )}
-      <Outlet
-        context={[
-          isLoggedIn,
-          setIsLoggedIn,
-          setShowMask,
-          ws,
-          setWs,
-          setFollowList,
-          notice,
-          setNotice,
-        ]}
-      />
+      <Header isLoggedIn={isLoggedIn} switchSidebar={switchSidebar} setSwitchSidebar={setSwitchSidebar} />
+      {isLoggedIn && <FollowList switchSidebar={switchSidebar} followList={followList} />}
+      {isLoggedIn && <Notification switchSidebar={switchSidebar} notice={notice} setNotice={setNotice} />}
+      {/* <Celebrate ref={videoRef}>
+        <video autoPlay={true} width="100%" height="auto" controls>
+          <source src={fireworks} type="video/mp4" />
+        </video>
+        煙火影片
+      </Celebrate> */}
+      <Outlet context={[isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, setFollowList, notice, setNotice]} />
       <Footer />
     </CartContext.Provider>
   );

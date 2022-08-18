@@ -1,18 +1,24 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useOutletContext, useParams, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import LiveStreamingAlert from "./LiveStreamingAlert";
-import io from "socket.io-client";
-import api from "../../utils/api";
-import personhead from "./personhead.png";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useOutletContext, useParams, useNavigate, Link } from 'react-router-dom';
+import styled from 'styled-components';
+import LiveStreamingAlert from './LiveStreamingAlert';
+import io from 'socket.io-client';
+import api from '../../utils/api';
+import personhead from './personhead.png';
+
 //上傳影片Reels
-import axios from "axios";
+import axios from 'axios';
 //直播畫面
-import { MemoVideoLoad } from "../../components/LiveJump/VideoLoad";
-import VideoProducts from "../../components/LiveJump//VideoProducts";
-import Game from "./Game/Game";
+
+import Game from './Game/Game';
+import { MemoVideoLoad } from '../../components/LiveJump/VideoLoad';
+import VideoProducts from '../../components/LiveJump//VideoProducts';
+//引入心願清單
+import WishPage from './WishPage';
+//引入couponPage
+import CouponPage from './CouponPage';
+//引入ReelsPage
+import ReelsPage from './ReelsPage';
 
 const Wrapper = styled.div`
   display: flex;
@@ -88,9 +94,11 @@ const UserInfoWrapper = styled.div`
 const NameFollowers = styled.div`
   display: flex;
   align-items: center;
+  padding-bottom: 10px;
 `;
 
 const NameButton = styled.div`
+  margin-left: 15px;
   @media (max-width: 1279px) {
   }
 `;
@@ -98,9 +106,8 @@ const NameButton = styled.div`
 const Photo = styled.img`
   border-radius: 50%;
   width: 150px;
-
-  animation: ${(props) =>
-    props.$status === 1 ? "pump 1s linear infinite" : null};
+  cursor: pointer;
+  animation: ${(props) => (props.$status === 1 ? 'pump 1s linear infinite' : null)};
   @keyframes pump {
     0% {
       box-shadow: 0px 0px 0px 0px rgba(255, 0, 0, 0.5);
@@ -221,7 +228,7 @@ const Tab = styled.div`
   margin: 45px 15px 0px 0px;
   padding: 0px 10px;
   cursor: pointer;
-  background-color: ${(props) => (props.$bgColor ? "#f3efef" : "none")};
+  background-color: ${(props) => (props.$bgColor ? '#f3efef' : 'none')};
   white-space: nowrap;
   @media (max-width: 1279px) {
     font-size: 14px;
@@ -237,58 +244,49 @@ const GameWrapper = styled.div`
   width: 80%;
   margin: 20px auto;
 `;
-const ReelsPanel = styled.div`
-  height: 500px;
-  width: 80%;
-  margin: 20px auto;
-  display: flex;
-  position: relative;
-  @media (max-width: 1279px) {
-    height: auto;
-    flex-wrap: wrap;
-    flex-direction: column;
-  }
-`;
-const Reel = styled.div`
-  height: 100%;
-  width: 30%;
-  background-color: #f3efef;
-  border-radius: 10px;
+
+// ========================遊戲區開始========================
+const MonsterOutside = styled.div`
   margin: 0 auto;
   display: flex;
-  justify-content: center;
   align-items: center;
-  @media (max-width: 1279px) {
-    flex-direction: column;
-    flex-wrap: wrap;
-    margin-top: 20px;
+  animation: seeme 0.8s linear infinite;
+  @keyframes seeme {
+    0% {
+      transform: translate(0px, -5px);
+    }
+    50% {
+      transform: translate(0px, 5px);
+    }
+    100% {
+      transform: translate(0px, -5px);
+    }
   }
 `;
-const ReelsDirection = styled.div`
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  color: #999;
-  font-size: 24px;
-  text-align: center;
-  position: absolute;
-  top: 40%;
-  background-color: #fff;
-  border: 1px solid #999;
-  &:hover {
-    background-color: #dcdcdc;
-  }
+
+const MonsterTitle = styled.div`
+  margin: 30px 30px;
+  color: #ffa500;
+  font-size: 25px;
 `;
-const ReelsLeft = styled(ReelsDirection)`
-  left: -10px;
+
+const MonsterBodyZone = styled.div`
+  scale: 0.6;
 `;
-const ReelsRight = styled(ReelsDirection)`
-  right: -10px;
-`;
-const WishList = styled.div`
-  width: 80%;
-  margin: 20px auto;
+
+const Monster = styled.div`
+  box-shadow: 0 0 0 1em #ffdead, 0 1em 0 1em #ffdead, -2.5em 1.5em 0 0.5em #ffdead, 2.5em 1.5em 0 0.5em #ffdead,
+    -3em -3em 0 0 #ffdead, 3em -3em 0 0 #ffdead, -2em -2em 0 0 #ffdead, 2em -2em 0 0 #ffdead, -3em -1em 0 0 #ffdead,
+    -2em -1em 0 0 #ffdead, 2em -1em 0 0 #ffdead, 3em -1em 0 0 #ffdead, -4em 0 0 0 #ffdead, -3em 0 0 0 #ffdead,
+    3em 0 0 0 #ffdead, 4em 0 0 0 #ffdead, -5em 1em 0 0 #ffdead, -4em 1em 0 0 #ffdead, 4em 1em 0 0 #ffdead,
+    5em 1em 0 0 #ffdead, -5em 2em 0 0 #ffdead, 5em 2em 0 0 #ffdead, -5em 3em 0 0 #ffdead, -3em 3em 0 0 #ffdead,
+    3em 3em 0 0 #ffdead, 5em 3em 0 0 #ffdead, -2em 4em 0 0 #ffdead, -1em 4em 0 0 #ffdead, 1em 4em 0 0 #ffdead,
+    2em 4em 0 0 #ffdead;
+  background: #ffdead;
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+  margin: 70px 0 70px 65px;
 `;
 const Today = styled.div`
   padding: 5px 0px;
@@ -357,21 +355,16 @@ const GameCompleted = styled(GameWrapper)`
   justify-content: center;
 `;
 
+// ========================遊戲區開始========================
+
+// ========================function開始========================
+
 function Profile() {
   const paramId = useParams().id;
-  let userId = JSON.parse(localStorage.getItem("user"))?.id;
+  let userId = JSON.parse(localStorage.getItem('user'))?.id;
   const [profile, setProfile] = useState();
   let navigate = useNavigate();
-  const [
-    isLoggedIn,
-    setIsLoggedIn,
-    setShowMask,
-    ws,
-    setWs,
-    setFollowList,
-    notice,
-    setNotice,
-  ] = useOutletContext();
+  const [isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, setFollowList, notice, setNotice] = useOutletContext();
   const [isLiveStreamingOn, setIsLiveStreamingOn] = useState(false);
   const [showLiveAlert, setShowLiveAlert] = useState(false);
   const [tabSelected, setTabSelected] = useState({
@@ -380,7 +373,7 @@ function Profile() {
     wishList: false,
     coupon: false,
   });
-  const [tabCustomSelected, settabCustomSelected] = useState({
+  const [tabCustomSelected, setTabCustomSelected] = useState({
     reels: true,
     wishList: false,
   });
@@ -392,16 +385,22 @@ function Profile() {
   //Reels
   const [Reels, setReels] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [videoZone, setVideoZone] = useState("none");
+  const [videoZone, setVideoZone] = useState('none');
   const [followStatus, setFollowStatus] = useState(null);
   const [followerNumber, setFollowerNumber] = useState();
   const [author, setAuthor] = useState();
   const closeVideo = useCallback(() => {
-    setVideoZone("none");
+    setVideoZone('none');
   }, []);
   const openVideo = useCallback(() => {
-    setVideoZone("block");
+    setVideoZone('block');
   }, []);
+
+  //心願清單
+  const [wish, setWish] = useState([]);
+  //coupons
+  const [coupon, setCoupon] = useState([]);
+
   function tabSwitched(target) {
     if (!target) return;
     let defaultTab = {
@@ -420,63 +419,63 @@ function Profile() {
       wishList: false,
     };
     defaultTab[target] = true;
-    settabCustomSelected(defaultTab);
+    setTabCustomSelected(defaultTab);
   }
   const disconnectWs = () => {
-    ws.on("disconnect");
+    ws.on('disconnect');
     setWs(null);
   };
   const openLive = (data) => {
-    const live = io("https://www.domingoos.store/influencer", {
+    const live = io('https://www.domingoos.store/influencer', {
       query: { live_setting: 1 },
       extraHeaders: {
-        jwtToken: localStorage.getItem("jwtToken"),
+        jwtToken: localStorage.getItem('jwtToken'),
       },
     });
-    live.emit("liveInfo", { status: 1, products: data });
-    live.on("disconnect");
+    live.emit('liveInfo', { status: 1, products: data });
+    live.on('disconnect');
   };
   const authLive = () => {
-    const live = io("https://www.domingoos.store/influencer", {
+    const live = io('https://www.domingoos.store/influencer', {
       query: { live_setting: 1 },
       extraHeaders: {
-        jwtToken: localStorage.getItem("jwtToken"),
+        jwtToken: localStorage.getItem('jwtToken'),
       },
     });
-    live.on("status", (data) => {
+    live.on('status', (data) => {
       if (data.status == 200) {
-        live.on("key", (data) => {
+        live.on('key', (data) => {
           if (data.status == 200) {
             setLiveKey(data.key);
             setUrl(data.url);
             setShowLiveAlert(true);
             setShowMask(true);
           } else {
-            window.alert("金鑰取得失敗！");
+            window.alert('金鑰取得失敗！');
           }
         });
       } else {
-        alert("身份驗證失敗！");
+        alert('身份驗證失敗！');
       }
     });
-    live.on("disconnect");
+    live.on('disconnect');
     let profileData = { ...profile, liveStatus: 1 };
     setProfile(profileData);
   };
   const closeLive = () => {
-    const live = io("https://www.domingoos.store/influencer", {
+    const live = io('https://www.domingoos.store/influencer', {
       query: { live_setting: 0 },
       extraHeaders: {
-        jwtToken: localStorage.getItem("jwtToken"),
+        jwtToken: localStorage.getItem('jwtToken'),
       },
     });
 
-    live.once("status", (res) => {
-      if (res === "200") {
-        live.emit("liveInfo", { status: 0 });
+    live.once('status', (res) => {
+      if (res === '200') {
+        live.emit('liveInfo', { status: 0 });
       }
     });
-    live.on("disconnect");
+    live.on('disconnect');
     let profileData = { ...profile, liveStatus: 0 };
     setProfile(profileData);
   };
@@ -485,7 +484,7 @@ function Profile() {
       followStatus: 1,
       follow_id: Number(paramId),
     };
-    ws.emit("updateFollow", data);
+    ws.emit('updateFollow', data);
     setFollowStatus(true);
     setFollowerNumber((prev) => prev + 1);
   };
@@ -501,22 +500,17 @@ function Profile() {
     getProfile();
     if (userId && userId === Number(paramId)) {
       async function getGameStatus() {
-        const { data } = await api.getGameStatus(
-          paramId,
-          localStorage.getItem("jwtToken")
-        );
+        const { data } = await api.getGameStatus(paramId, localStorage.getItem('jwtToken'));
         setGameProgress(data.progress);
         const date = new Date().getDay();
         setToday(date - 1);
+        console.log(data.progress);
       }
       getGameStatus();
     }
     if (userId && userId !== Number(paramId)) {
       async function getFollowStatus() {
-        const { data } = await api.getFollowStatus(
-          paramId,
-          localStorage.getItem("jwtToken")
-        );
+        const { data } = await api.getFollowStatus(paramId, localStorage.getItem('jwtToken'));
         setFollowStatus(data);
       }
       getFollowStatus();
@@ -526,9 +520,9 @@ function Profile() {
   useEffect(() => {
     if (isLoggedIn) {
       setWs(
-        io("https://www.domingoos.store", {
+        io('https://www.domingoos.store', {
           extraHeaders: {
-            jwtToken: localStorage.getItem("jwtToken"),
+            jwtToken: localStorage.getItem('jwtToken'),
           },
         })
       );
@@ -537,12 +531,12 @@ function Profile() {
 
   useEffect(() => {
     if (ws) {
-      ws.on("followList", (data) => {
+      ws.on('followList', (data) => {
         if (data.status === 200) {
           setFollowList(data.followList);
         }
       });
-      ws.on("live", (data) => {
+      ws.on('live', (data) => {
         let currentNotice = [...notice];
         let newNotice = currentNotice.concat({ ...data, read: 0 });
         setNotice(newNotice);
@@ -552,20 +546,21 @@ function Profile() {
 
   //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝上傳影片＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
-  const jwtToken = localStorage.getItem("jwtToken");
+  const jwtToken = localStorage.getItem('jwtToken');
+
   const inputRef = useRef();
   async function uploadVideo() {
     const video = inputRef.current.files[0];
     let formData = new FormData();
-    formData.append("video", video);
-    formData.append("userID", 1);
+    formData.append('video', video);
+    formData.append('userID', 1);
     const { data } = await axios({
-      method: "post",
+      method: 'post',
       url: `https://www.domingoos.store/api/1.0/user/${paramId}/reels`,
       data: formData,
       headers: {
         Authorization: `Bearer ${jwtToken}`,
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
       },
     });
     getVideo();
@@ -586,9 +581,7 @@ function Profile() {
     }
   }
   function getVideo() {
-    fetch(
-      `https://www.domingoos.store/api/1.0/user/${paramId}/reels?paging=${currentPage}`
-    )
+    fetch(`https://www.domingoos.store/api/1.0/user/${paramId}/reels?paging=${currentPage}`)
       .then((res) => res.json())
       .then((data) => {
         setReels(data.data);
@@ -601,7 +594,7 @@ function Profile() {
   if (!Reels) return null;
   //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝Reel拿影片區＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
-  //================關閉直播區================
+  //================關閉直播區開始================
 
   const VideoBackground = styled.div`
     width: 100%;
@@ -614,7 +607,33 @@ function Profile() {
     z-index: 10;
     background: #a9a9a9;
   `;
-  //================關閉直播區================
+  //================關閉直播區結束================
+
+  // ========================coupon開始========================
+
+  function getCoupon() {
+    fetch(`https://www.domingoos.store/api/1.0/user/${paramId}/coupons`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => setCoupon(res.data));
+  }
+
+  // ========================coupon結束========================
+
+  // ========================許願清單開始========================
+
+  function getWishList() {
+    fetch(`https://www.domingoos.store/api/1.0/user/${paramId}/like`)
+      .then((res) => res.json())
+      .then((res) => setWish(res.data));
+  }
+
+  // ========================許願清單結束========================
 
   const btnList = () => {
     if (!userId) {
@@ -650,7 +669,7 @@ function Profile() {
               className="file-uploader"
               data-target="file-uploader"
               accept="video/*"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
             />
           </UploadVideoInputButton>
           <UploadVideoButton onClick={uploadVideo} id="video-btn">
@@ -658,11 +677,11 @@ function Profile() {
           </UploadVideoButton>
           <LogoutButton
             onClick={() => {
-              window.localStorage.removeItem("jwtToken");
-              window.localStorage.removeItem("user");
+              window.localStorage.removeItem('jwtToken');
+              window.localStorage.removeItem('user');
               setIsLoggedIn(false);
               disconnectWs();
-              navigate("/login");
+              navigate('/login');
             }}
           >
             登出
@@ -672,12 +691,8 @@ function Profile() {
     } else if (Number(paramId) !== userId) {
       return (
         <>
-          {profile.liveStatus === 1 && (
-            <LiveButton onClick={openVideo}>點此看直播</LiveButton>
-          )}
-          {followStatus === false && (
-            <LiveButton onClick={updateFollowList}>追蹤</LiveButton>
-          )}
+          {profile.liveStatus === 1 && <LiveButton onClick={openVideo}>點此看直播</LiveButton>}
+          {followStatus === false && <LiveButton onClick={updateFollowList}>追蹤</LiveButton>}
           {followStatus === true && <LiveButton>已追蹤</LiveButton>}
         </>
       );
@@ -687,13 +702,9 @@ function Profile() {
   return (
     <>
       <Wrapper>
-        {videoZone === "block" && (
+        {videoZone === 'block' && (
           <>
-            <MemoVideoLoad
-              closeVideo={closeVideo}
-              videoUrl={profile.liveUrl}
-              name={profile.name}
-            />
+            <MemoVideoLoad closeVideo={closeVideo} videoUrl={profile.liveUrl} name={profile.name} />
             <VideoProducts />
             <VideoBackground />
           </>
@@ -702,11 +713,7 @@ function Profile() {
           {profile && (
             <UserWrapper>
               <UserInfoWrapper>
-                <Photo
-                  src={profile.picture || personhead}
-                  onClick={openVideo}
-                  $status={profile.liveStatus}
-                />
+                <Photo src={profile.picture || personhead} onClick={openVideo} $status={profile.liveStatus} />
                 <NameButton>
                   <NameFollowers>
                     <Name>{profile.name}</Name>
@@ -730,6 +737,7 @@ function Profile() {
               url={url}
             />
           )}
+
           {author === 1 && (
             <DailyTaskReminder>
               <ProgressWrapper>
@@ -766,6 +774,12 @@ function Profile() {
                             <ProgressInner />
                           </Progress>
                         );
+                      else if (record === 1)
+                        return (
+                          <ProgressChecked>
+                            <ProgressInnerChecked />
+                          </ProgressChecked>
+                        );
                     }
                   })}
               </ProgressWrapper>
@@ -785,10 +799,10 @@ function Profile() {
                 <Tab id="reels" $bgColor={tabSelected.reels}>
                   Reels
                 </Tab>
-                <Tab id="wishList" $bgColor={tabSelected.wishList}>
+                <Tab id="wishList" $bgColor={tabSelected.wishList} onClick={getWishList}>
                   心願清單
                 </Tab>
-                <Tab id="coupon" $bgColor={tabSelected.coupon}>
+                <Tab id="coupon" $bgColor={tabSelected.coupon} onClick={getCoupon}>
                   Coupon
                 </Tab>
               </>
@@ -798,42 +812,32 @@ function Profile() {
                 <Tab id="reels" $bgColor={tabCustomSelected.reels}>
                   Reels
                 </Tab>
-                <Tab id="wishList" $bgColor={tabCustomSelected.wishList}>
+                <Tab id="wishList" $bgColor={tabCustomSelected.wishList} onClick={getWishList}>
                   心願清單
                 </Tab>
               </>
             )}
           </Tabs>
-          {tabSelected.task && author === 1 && gameProgress[today] === 0 ? (
-            <GameWrapper>
-              <Game />
-            </GameWrapper>
-          ) : tabSelected.task && author === 1 && gameProgress[today] === 1 ? (
+          {tabSelected.task && author === 1 && gameProgress && gameProgress[today] === 0 ? (
+            <>
+              <GameWrapper>
+                <Game />
+              </GameWrapper>
+              <MonsterOutside>
+                <MonsterTitle> 玩遊戲即可獲得小驚喜喔～</MonsterTitle>
+                <MonsterBodyZone>
+                  <Monster />
+                </MonsterBodyZone>
+              </MonsterOutside>
+            </>
+          ) : tabSelected.task && author === 1 && gameProgress && gameProgress[today] === 1 ? (
             <GameCompleted>今日任務已完成</GameCompleted>
-          ) : tabSelected.reels || tabCustomSelected.reels ? (
-            <ReelsPanel>
-              <ReelsLeft onClick={ReelPageReduce}>
-                <FontAwesomeIcon icon={faAngleLeft} />
-              </ReelsLeft>
-              {Reels.map((video) => (
-                <Reel>
-                  <video
-                    autoPlay
-                    loop
-                    height={480}
-                    width={270}
-                    controls
-                    src={video.url}
-                    muted
-                  ></video>
-                </Reel>
-              ))}
-              <ReelsRight onClick={ReelPageAdd}>
-                <FontAwesomeIcon icon={faAngleRight} />
-              </ReelsRight>
-            </ReelsPanel>
-          ) : tabSelected.WishList || tabCustomSelected.WishList ? (
-            <WishList />
+          ) : (author === 1 && tabSelected.reels) || (author !== 1 && tabCustomSelected.reels) ? (
+            <ReelsPage Reels={Reels} ReelPageAdd={ReelPageAdd} ReelPageReduce={ReelPageReduce} />
+          ) : (author === 1 && tabSelected.wishList) || (author !== 1 && tabCustomSelected.wishList) ? (
+            <WishPage wish={wish} />
+          ) : tabSelected.coupon && author === 1 ? (
+            <CouponPage coupon={coupon} />
           ) : null}
         </UserMainColumn>
       </Wrapper>

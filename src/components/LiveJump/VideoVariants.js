@@ -12,7 +12,7 @@ const Color = styled.div`
   }
 `;
 const ColorName = styled.div`
-  font-size: 30px;
+  font-size: 25px;
   margin-right: 10px;
   @media screen and (max-width: 1279px) {
     font-size: 18px;
@@ -27,8 +27,8 @@ const ColorItemsOutside = styled.div`
 `;
 const ColorItems = styled.div`
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   padding: 6px;
   border: 6px solid white;
   box-shadow: 0px 0px 1px #bbbbbb;
@@ -48,7 +48,7 @@ const Size = styled.div`
   display: flex;
   justify-content: start;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 25px;
   font-size: 30px;
   @media screen and (max-width: 1279px) {
     flex-direction: column;
@@ -56,7 +56,7 @@ const Size = styled.div`
   }
 `;
 const SizeName = styled.div`
-  font-size: 30px;
+  font-size: 25px;
   margin-right: 10px;
   @media screen and (max-width: 1279px) {
     font-size: 18px;
@@ -91,10 +91,10 @@ const SizeItems = styled.div`
 `;
 const Number = styled.div`
   display: flex;
-  margin-top: 40px;
+  margin-top: 25px;
   justify-content: start;
   align-items: center;
-  font-size: 30px;
+  font-size: 25px;
   @media screen and (max-width: 1279px) {
     flex-direction: column;
     font-size: 25px;
@@ -139,7 +139,7 @@ const Add = styled.div`
 const Buy = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 25px;
   font-size: 23px;
   padding: 15px;
   background: brown;
