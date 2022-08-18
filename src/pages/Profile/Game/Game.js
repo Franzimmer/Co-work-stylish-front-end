@@ -14,15 +14,40 @@ import { motion } from "framer-motion";
 import { React, useEffect, useState } from "react";
 import "./game.css";
 import api from "../../../utils/api";
-// import styled from "styled-component";
+import styled from "styled-components";
+import ad1 from "./ad_demo1.mp4";
+import ad2 from "./ad_demo2.mp4";
+import ad3 from "./ad_demo3.mp4";
+const AdWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const AdPlayer = styled.video`
+  position: absolute;
+  z-index: 102;
+  background-color: #000;
+  top: 150px;
+  width: 80vw;
+  height: 45vw;
+`;
+const Ad = styled.source``;
+const AdCloseBtn = styled.div`
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  z-index: 101;
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  color: #000;
+  background-color: #ddd;
+  font-weight: 500;
+  font-size: 30px;
+`;
 
-// src
-// const AdPlayer = styled.video`
-//   position: fixed;
-//   z-index: 102;
-// `;
-
-function Game() {
+function Game({ setGameProgress, userId, jwtToken, setShowMask }) {
   const [userChoice, setUserChoice] = useState(maleIdle);
   const [computerChoice, setComputerChoice] = useState(femaleIdle);
   const [maleImg, setMaleImg] = useState(maleIdle);
@@ -32,7 +57,9 @@ function Game() {
   const [splash, setSplash] = useState(false);
   const choices = ["rock", "paper", "scissors"];
   const [chance, setChance] = useState(3);
-
+  const [showAd, setShowAd] = useState(false);
+  const [adSource, setAdSource] = useState();
+  const [showAdCloseBtn, setShowAdCloseBtn] = useState(false);
   const handleClick = (value) => {
     setUserChoice(value);
     generateComputerChoice();
@@ -69,9 +96,27 @@ function Game() {
       setFemaleImg(female_paper);
     }
   };
-
+  function closeAd() {
+    setShowMask(false);
+    setShowAd(false);
+    setAdSource();
+    setSplash(false);
+    setResult();
+    setGameOver(false);
+  }
+  function playAd() {
+    setShowMask(true);
+    setShowAd(true);
+    setAdSource(Math.floor(Math.random() * 3 + 1));
+    setTimeout(() => setShowAdCloseBtn(true), 8000);
+  }
   useEffect(() => {
     const comboMoves = userChoice + computerChoice;
+    async function updateGame() {
+      const { data } = await api.updateGameStatus(userId, jwtToken);
+      setGameProgress(data.progress);
+    }
+
     if (
       comboMoves === "scissorspaper" ||
       comboMoves === "rockscissors" ||
@@ -82,9 +127,10 @@ function Game() {
       setTimeout(() => {
         setGameOver(gameOff);
       }, 1000);
-      api.updateGameStatus(); //可以回我新的狀態嗎
+      setTimeout(() => {
+        updateGame();
+      }, 2000);
     }
-
     if (
       comboMoves === "paperscissors" ||
       comboMoves === "scissorsrock" ||
@@ -96,13 +142,8 @@ function Game() {
         const gameOff = true;
         setTimeout(() => {
           setGameOver(gameOff);
+          playAd();
         }, 1000);
-        localStorage.setItem("gameStatus", "lose");
-        //play video：
-        //setMask
-        // video + close btn(show after video finish)
-        // set localStorage
-        // set State
       }
     }
   }, [computerChoice, userChoice]);
@@ -230,6 +271,16 @@ function Game() {
             Start
           </motion.button>
         </motion.div>
+      )}
+      {showAd && (
+        <AdWrapper>
+          {showAdCloseBtn && <AdCloseBtn onClick={closeAd}>X</AdCloseBtn>}
+          <AdPlayer autoPlay={true} loop={true}>
+            {adSource === 1 && <Ad src={ad1} type="video/mp4" />}
+            {adSource === 2 && <Ad src={ad2} type="video/mp4" />}
+            {adSource === 3 && <Ad src={ad3} type="video/mp4" />}
+          </AdPlayer>
+        </AdWrapper>
       )}
     </>
   );

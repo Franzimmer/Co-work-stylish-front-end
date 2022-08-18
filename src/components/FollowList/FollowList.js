@@ -43,8 +43,7 @@ const PersonHead = styled.div`
   background-repeat: no-repeat;
   background-size: 100%;
   box-shadow: 1px 1px 10px
-    ${(props) =>
-      props.$status === 1 ? "rgba(255, 96, 96, 1)" : "rgba(0, 0, 0, 0)"};
+    ${(props) => (props.$status ? "rgba(255, 96, 96, 1)" : "rgba(0, 0, 0, 0)")};
   @media screen and (max-width: 1279px) {
     width: 30px;
     height: 30px;

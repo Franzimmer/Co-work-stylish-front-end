@@ -81,7 +81,6 @@ const api = {
   //格式
   async updateGameStatus(id, token) {
     const response = await fetch(`${this.hostname1}/user/${id}/game`, {
-      body: JSON.stringify({ progress: 1 }),
       headers: new Headers({
         Authorization: `Bearer ${token}`,
       }),
