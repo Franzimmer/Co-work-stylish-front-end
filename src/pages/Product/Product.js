@@ -211,6 +211,7 @@ function Product() {
   const { id } = useParams();
   //抓出JWT
   const jwtToken = localStorage.getItem('jwtToken');
+  const user = JSON.parse(localStorage.getItem('user')).id;
 
   useEffect(() => {
     async function getProduct() {
@@ -227,7 +228,7 @@ function Product() {
   // ＝＝＝＝＝＝＝＝＝＝＝＝加入心願清單＝＝＝＝＝＝＝＝＝＝＝＝
 
   function addWishProduct() {
-    fetch(`https://www.domingoos.store/api/1.0/user/10250/like/${id}`, {
+    fetch(`https://www.domingoos.store/api/1.0/user/${user}/like/${id}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${jwtToken}`,

@@ -460,8 +460,6 @@ function Profile() {
             window.alert('金鑰取得失敗！');
           }
         });
-      } else {
-        alert('身份驗證失敗！');
       }
     });
 
@@ -477,10 +475,12 @@ function Profile() {
     live.on('status', (msg) => {
       console.log(msg);
       if (msg.status != 200) alert('直播關閉失敗');
+      else if (msg.status == 200) {
+        let profileData = { ...profile, liveStatus: 0 };
+        setProfile(profileData);
+      }
     });
     live.on('disconnect');
-    // let profileData = { ...profile, liveStatus: 0 };
-    // setProfile(profileData);
   };
   const updateFollowList = () => {
     const data = {
