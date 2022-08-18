@@ -74,6 +74,8 @@ function Notification({ switchSidebar, notice, setNotice }) {
       read: 0,
     },
   ];
+  //如果有未讀訊息要顯示紅點在header上
+  //如果點了後就變成已讀狀態
   return (
     <Push display={switchSidebar["notification"]}>
       {notice &&

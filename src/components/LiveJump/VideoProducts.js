@@ -193,9 +193,6 @@ const VideoProducts = () => {
   //================抓取直播主選的要推廣商品================
   const [product, setProduct] = useState();
 
-  // https://api.appworks-school.tw/api/1.0/products/women
-  // https://www.domingoos.store/api/1.0/user/10259/live-products
-
   useEffect(() => {
     getVideoProducts();
   }, []);

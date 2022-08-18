@@ -364,7 +364,10 @@ function Profile() {
   let userId = JSON.parse(localStorage.getItem('user'))?.id;
   const [profile, setProfile] = useState();
   let navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, setFollowList, notice, setNotice] = useOutletContext();
+
+  const [isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, followList, setFollowList, notice, setNotice] =
+    useOutletContext();
+
   const [isLiveStreamingOn, setIsLiveStreamingOn] = useState(false);
   const [showLiveAlert, setShowLiveAlert] = useState(false);
   const [tabSelected, setTabSelected] = useState({
@@ -380,7 +383,6 @@ function Profile() {
   const [liveKey, setLiveKey] = useState();
   const [url, setUrl] = useState();
   const [gameProgress, setGameProgress] = useState();
-  // const fakeGameProgress = [0, 0, 1, 1, 1, 1, 1];
   const [today, setToday] = useState();
   //Reels
   const [Reels, setReels] = useState([]);
@@ -432,8 +434,11 @@ function Profile() {
         jwtToken: localStorage.getItem('jwtToken'),
       },
     });
+
     live.emit('liveInfo', { status: 1, products: data });
     live.on('disconnect');
+    let currentProfile = { ...profile, liveStatus: 1 };
+    setProfile(currentProfile);
   };
   const authLive = () => {
     const live = io('https://www.domingoos.store/influencer', {
@@ -458,9 +463,8 @@ function Profile() {
         alert('身份驗證失敗！');
       }
     });
+
     live.on('disconnect');
-    let profileData = { ...profile, liveStatus: 1 };
-    setProfile(profileData);
   };
   const closeLive = () => {
     const live = io('https://www.domingoos.store/influencer', {
@@ -536,10 +540,23 @@ function Profile() {
           setFollowList(data.followList);
         }
       });
+
       ws.on('live', (data) => {
+        console.log(data);
+
         let currentNotice = [...notice];
-        let newNotice = currentNotice.concat({ ...data, read: 0 });
-        setNotice(newNotice);
+        if (!data.status) {
+          let newNotice = currentNotice.concat({ ...data, read: 0 });
+          setNotice(newNotice);
+          console.log(newNotice);
+        }
+        let newFollowStatus = data;
+        let currentFollowList = [...followList];
+        let removeStatus = currentFollowList.find((person, index) => data.id === person.id);
+        let removeStatusId = currentFollowList.indexOf(removeStatus);
+        currentFollowList[removeStatusId] = newFollowStatus;
+        console.log(currentFollowList);
+        setFollowList(currentFollowList);
       });
     }
   }, [ws]);
@@ -641,7 +658,7 @@ function Profile() {
     } else if (Number(paramId) === userId) {
       return (
         <>
-          {profile.role_id[0] === 3 && profile.liveStatus === 0 && (
+          {profile.role_id[0] === 3 && !profile.liveStatus && (
             <LiveButton
               onClick={() => {
                 authLive();
@@ -818,6 +835,7 @@ function Profile() {
               </>
             )}
           </Tabs>
+
           {tabSelected.task && author === 1 && gameProgress && gameProgress[today] === 0 ? (
             <>
               <GameWrapper>

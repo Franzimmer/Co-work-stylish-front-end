@@ -3,7 +3,6 @@ import Carousel from "./Carousel";
 import Products from "./Products";
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
-import ReactHlsPlayer from "react-hls-player";
 
 const Video = styled.div`
   margin: 0 auto;
