@@ -22,6 +22,10 @@ const StopVideoOutside = styled.div`
   justify-content: center;
   border-radius: 60%;
   align-items: center;
+  cursor: pointer;
+  &:hover {
+    background-color: #dcdcdc;
+  }
 `;
 
 const StopVideoWord = styled.div`
@@ -90,8 +94,8 @@ const VideoItSelf = styled.div`
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝影片區＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 const VideoLoad = (props) => {
-  let url = props.videoUrl || 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
-  const [hlsUrl, setHlsUrl] = useState(url);
+  // let url = props.videoUrl || 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+  const [hlsUrl, setHlsUrl] = useState();
   const playerRef = useRef();
   const [play, setPlay] = useState();
 
@@ -114,7 +118,6 @@ const VideoLoad = (props) => {
             src={hlsUrl}
             controls={true}
             width="100%"
-            height="auto"
             autoPlay={true}
             poster={preloadPic1}
           />

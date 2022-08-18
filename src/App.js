@@ -17,9 +17,6 @@ import NotoSansTCBold from './fonts/NotoSansTC-Bold.otf';
 import ReactAudioPlayer from 'react-audio-player';
 import cheers from './cheers.aac';
 
-//煙火影片
-import fireworks from './fireworks.mov';
-
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: PingFangTC;
@@ -114,7 +111,6 @@ function App() {
     window.localStorage.setItem('cartItems', JSON.stringify(newCartItems));
     audioRef.current.audioEl.current.play();
     window.alert('已加入商品');
-    videoRef.current.videoEl.current.play();
   }
   function changeItemQuantity(itemIndex, itemQuantity) {
     const newCartItems = cartItems.map((item, index) =>
@@ -159,12 +155,6 @@ function App() {
       <Header isLoggedIn={isLoggedIn} switchSidebar={switchSidebar} setSwitchSidebar={setSwitchSidebar} />
       {isLoggedIn && <FollowList switchSidebar={switchSidebar} followList={followList} />}
       {isLoggedIn && <Notification switchSidebar={switchSidebar} notice={notice} setNotice={setNotice} />}
-      {/* <Celebrate ref={videoRef}>
-        <video autoPlay={true} width="100%" height="auto" controls>
-          <source src={fireworks} type="video/mp4" />
-        </video>
-        煙火影片
-      </Celebrate> */}
       <Outlet
         context={{ isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, followList, setFollowList, notice, setNotice }}
       />

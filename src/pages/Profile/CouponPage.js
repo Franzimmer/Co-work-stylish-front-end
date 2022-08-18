@@ -94,29 +94,55 @@ const CouponExpired = styled.div`
   color: white;
 `;
 
+const CouponEmpty = styled.div`
+  color: #b67c62;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CouponBackground = styled.div`
+  background-color: #f3efef;
+  height: 100%;
+  width: 80%;
+  margin: 20px auto;
+`;
+
 // ========================coupon開始========================
 
 const couponPage = (props) => {
   return (
-    <CouponZone>
-      <CouponList>
-        {props.coupon.map((item) => (
-          <Coupon>
-            <CouponTop>
-              <CouponWin>
-                <CouponWinName>限</CouponWinName>
-              </CouponWin>
-              <CouponTitle>{item.title}</CouponTitle>
-            </CouponTop>
-            <CouponName>{item.name}</CouponName>
-            <CouponDescription>{item.description}</CouponDescription>
-            <CouponExpiredOutside>
-              <CouponExpired>{item.expire}未到期</CouponExpired>
-            </CouponExpiredOutside>
-          </Coupon>
-        ))}
-      </CouponList>
-    </CouponZone>
+    <>
+      {props.coupon.length > 0 ? (
+        <CouponZone>
+          <CouponList>
+            {props.coupon.map((item) => (
+              <Coupon>
+                <CouponTop>
+                  <CouponWin>
+                    <CouponWinName>限</CouponWinName>
+                  </CouponWin>
+                  <CouponTitle>{item.title}</CouponTitle>
+                </CouponTop>
+                <CouponName>{item.name}</CouponName>
+                <CouponDescription>{item.description}</CouponDescription>
+                <CouponExpiredOutside>
+                  <CouponExpired>{item.expire}未到期</CouponExpired>
+                </CouponExpiredOutside>
+              </Coupon>
+            ))}
+          </CouponList>
+        </CouponZone>
+      ) : (
+        <CouponBackground>
+          <CouponEmpty>快去玩遊戲吧～～</CouponEmpty>
+        </CouponBackground>
+      )}
+    </>
   );
 };
 

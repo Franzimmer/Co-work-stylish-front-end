@@ -93,40 +93,51 @@ const WishButton = styled(Link)`
   }
 `;
 
-// const WishDeleteButton = styled.div`
-//   background: #dcdcdc;
-//   padding: 5px;
-//   border-radius: 10px;
-//   cursor: pointer;
-//   display: flex;
-//   text-decoration: none;
-//   color: black;
-//   margin-left: 10px;
-//   @media (max-width: 1279px) {
-//     margin-bottom: 15px;
-//   }
-// `;
+const WishEmpty = styled.div`
+  color: #b67c62;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WishBackground = styled.div`
+  background-color: #f3efef;
+  height: 100%;
+  width: 80%;
+  margin: 20px auto;
+`;
 
 // ========================許願清單結束========================
 
 const WishPage = (props) => {
   return (
-    <WishList>
-      <WishListOutside>
-        {props.wish.map((item) => (
-          <WishListProductZone>
-            <WishPicZone>
-              <WishPic src={item.main_image} />
-            </WishPicZone>
-            <WishName>{item.title}</WishName>
-            <WishButton to={`/products/${item.product_id}`}>
-              <WishFinger>☞</WishFinger> 點我看商品
-            </WishButton>
-            {/* <WishDeleteButton>刪除</WishDeleteButton> */}
-          </WishListProductZone>
-        ))}
-      </WishListOutside>
-    </WishList>
+    <>
+      {props.wish.length > 0 ? (
+        <WishList>
+          <WishListOutside>
+            {props.wish.map((item) => (
+              <WishListProductZone>
+                <WishPicZone>
+                  <WishPic src={item.main_image} />
+                </WishPicZone>
+                <WishName>{item.title}</WishName>
+                <WishButton to={`/products/${item.product_id}`}>
+                  <WishFinger>☞</WishFinger> 點我看商品
+                </WishButton>
+              </WishListProductZone>
+            ))}
+          </WishListOutside>
+        </WishList>
+      ) : (
+        <WishBackground>
+          <WishEmpty>快去商品頁逛逛吧～～</WishEmpty>
+        </WishBackground>
+      )}
+    </>
   );
 };
 

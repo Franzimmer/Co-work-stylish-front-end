@@ -108,18 +108,31 @@ const Photo = styled.img`
   width: 150px;
   cursor: pointer;
   animation: ${(props) => (props.$status === 1 ? 'pump 1s linear infinite' : null)};
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
   @keyframes pump {
     0% {
       box-shadow: 0px 0px 0px 0px rgba(255, 0, 0, 0.5);
       scale: 1;
+      transform: rotate(0deg);
     }
     50% {
       box-shadow: 0px 0px 15px 15px rgba(255, 0, 0, 0.5);
       scale: 1.05;
+      transform: rotate(180deg);
     }
     100% {
       box-shadow: 0px 0px 1px 1px rgba (255, 0, 0, 0.5);
       scale: 1;
+      transform: rotate(360deg);
     }
   }
 
@@ -353,6 +366,12 @@ const GameCompleted = styled(GameWrapper)`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const VideoRealOutside = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 1400px;
 `;
 
 // ========================遊戲區開始========================
@@ -721,8 +740,10 @@ function Profile() {
       <Wrapper>
         {videoZone === 'block' && (
           <>
-            <MemoVideoLoad closeVideo={closeVideo} videoUrl={profile.liveUrl} name={profile.name} />
-            <VideoProducts />
+            <VideoRealOutside>
+              <MemoVideoLoad closeVideo={closeVideo} videoUrl={profile.liveUrl} name={profile.name} />
+              <VideoProducts />
+            </VideoRealOutside>
             <VideoBackground />
           </>
         )}

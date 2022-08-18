@@ -11,11 +11,46 @@ const Introduce = styled.div`
   height: 650px;
   padding: 0px 20px;
   z-index: 80;
-  width: 75%;
   position: fixed;
   left: 5vw;
   right: 5vw;
   top: 930px;
+  @media screen and (max-width: 1500px) {
+    top: 850px;
+  }
+  @media screen and (max-width: 1400px) {
+    top: 800px;
+  }
+  @media screen and (max-width: 1300px) {
+    top: 750px;
+  }
+  @media screen and (max-width: 1200px) {
+    top: 700px;
+  }
+  @media screen and (max-width: 1100px) {
+    top: 650px;
+  }
+  @media screen and (max-width: 1000px) {
+    top: 600px;
+  }
+  @media screen and (max-width: 900px) {
+    top: 550px;
+  }
+  @media screen and (max-width: 800px) {
+    top: 500px;
+  }
+  @media screen and (max-width: 700px) {
+    top: 450px;
+  }
+  @media screen and (max-width: 600px) {
+    top: 400px;
+  }
+  @media screen and (max-width: 500px) {
+    top: 350px;
+  }
+  @media screen and (max-width: 400px) {
+    top: 300px;
+  }
 `;
 
 const IntroduceProduct = styled.div`
@@ -201,7 +236,7 @@ const VideoProducts = () => {
 
   // https://www.domingoos.store/api/1.0/products/all
   function getVideoProducts() {
-    fetch('https://api.appworks-school.tw/api/1.0/products/women')
+    fetch(`https://www.domingoos.store/api/1.0/user/${paramId}/live-products`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data.data);

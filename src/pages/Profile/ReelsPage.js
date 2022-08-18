@@ -55,23 +55,50 @@ const ReelsRight = styled(ReelsDirection)`
   right: -10px;
 `;
 
+const ReelsEmpty = styled.div`
+  color: #b67c62;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ReelsBackground = styled.div`
+  background-color: #f3efef;
+  height: 100%;
+  width: 80%;
+  margin: 20px auto;
+`;
+
 // ========================Reel結束========================
 
 const ReelsPage = (props) => {
+  console.log(props.Reels);
   return (
-    <ReelsPanel>
-      <ReelsLeft onClick={props.ReelPageReduce}>
-        <FontAwesomeIcon icon={faAngleLeft} />
-      </ReelsLeft>
-      {props.Reels.map((video) => (
-        <Reel>
-          <video autoPlay loop height={480} width={270} controls src={video.url} muted></video>
-        </Reel>
-      ))}
-      <ReelsRight onClick={props.ReelPageAdd}>
-        <FontAwesomeIcon icon={faAngleRight} />
-      </ReelsRight>
-    </ReelsPanel>
+    <>
+      {props.Reels.length > 0 ? (
+        <ReelsPanel>
+          <ReelsLeft onClick={props.ReelPageReduce}>
+            <FontAwesomeIcon icon={faAngleLeft} />
+          </ReelsLeft>
+          {props.Reels.map((video) => (
+            <Reel>
+              <video autoPlay loop height={480} width={270} controls src={video.url} muted></video>
+            </Reel>
+          ))}
+          <ReelsRight onClick={props.ReelPageAdd}>
+            <FontAwesomeIcon icon={faAngleRight} />
+          </ReelsRight>
+        </ReelsPanel>
+      ) : (
+        <ReelsBackground>
+          <ReelsEmpty>快上傳你的影片吧～～</ReelsEmpty>
+        </ReelsBackground>
+      )}
+    </>
   );
 };
 
