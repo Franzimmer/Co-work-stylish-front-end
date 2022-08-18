@@ -44,7 +44,7 @@ const PersonHead = styled.div`
   background-size: 100%;
   box-shadow: 1px 1px 10px
     ${(props) =>
-      props.status === 1 ? "rgba(5, 5, 5, .5)" : "rgba(0, 0, 0, 0)"};
+      props.$status === 1 ? "rgba(255, 96, 96, 1)" : "rgba(0, 0, 0, 0)"};
   @media screen and (max-width: 1279px) {
     width: 30px;
     height: 30px;
@@ -74,24 +74,24 @@ const Tracked = styled.div`
 `;
 
 function FollowList({ switchSidebar, followList }) {
-  const orderedFollowList =
-    followList &&
-    followList.map((person) => {
-      return (
-        <Person key={person.id}>
-          <PersonHead path={person.picture} status={person.status} />
-          <PersonName>{person.name}</PersonName>
-        </Person>
-      );
-    });
+  // const orderedFollowList =
+  //   followList &&
+  //   followList.map((person) => {
+  //     return (
+  //       <Person key={person.id}>
+  //         <PersonHead path={person.picture} status={person.status} />
+  //         <PersonName>{person.name}</PersonName>
+  //       </Person>
+  //     );
+  //   });
   return (
     <Live display={switchSidebar["followList"]}>
       <Tracked>追蹤名單</Tracked>
       {followList &&
         followList.map((person) => {
           return (
-            <Person key={person.follow_id} to={`/profile/${person.follow_id}`}>
-              <PersonHead path={person.picture} />
+            <Person key={person.id} to={`/profile/${person.id}`}>
+              <PersonHead path={person.picture} $status={person.status} />
               <PersonName>{person.name}</PersonName>
             </Person>
           );

@@ -466,7 +466,8 @@ function Header({ switchSidebar, setSwitchSidebar, isLoggedIn }) {
           logInReminder();
         }}
       >
-        {/* {isLoggedIn && <BellIconAlert />} */}
+        {/* if notice.find -> msg.read === 0 */}
+        {/* { && <BellIconAlert />} */}
       </BellIcon>
       <SearchWrapper>
         <SearchSelect

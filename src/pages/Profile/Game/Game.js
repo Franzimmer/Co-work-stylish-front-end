@@ -10,13 +10,17 @@ import rock_icon from "./rock_icon.svg";
 import paper_icon from "./paper_icon.svg";
 import scissors_icon from "./scissors_icon.svg";
 import random_icon from "./random_icon.svg";
-import restart from "./restart.svg";
-import result_cpu from "./result_cpu.svg";
-import result_user from "./result_user.svg";
 import { motion } from "framer-motion";
-import { React, useEffect, useState, useRef } from "react";
+import { React, useEffect, useState } from "react";
 import "./game.css";
-import ConfettiExplosion from "react-confetti-explosion";
+import api from "../../../utils/api";
+// import styled from "styled-component";
+
+// src
+// const AdPlayer = styled.video`
+//   position: fixed;
+//   z-index: 102;
+// `;
 
 function Game() {
   const [userChoice, setUserChoice] = useState(maleIdle);
@@ -78,6 +82,7 @@ function Game() {
       setTimeout(() => {
         setGameOver(gameOff);
       }, 1000);
+      api.updateGameStatus(); //可以回我新的狀態嗎
     }
 
     if (
@@ -92,6 +97,12 @@ function Game() {
         setTimeout(() => {
           setGameOver(gameOff);
         }, 1000);
+        localStorage.setItem("gameStatus", "lose");
+        //play video：
+        //setMask
+        // video + close btn(show after video finish)
+        // set localStorage
+        // set State
       }
     }
   }, [computerChoice, userChoice]);

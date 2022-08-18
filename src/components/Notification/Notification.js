@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const Push = styled.div`
   z-index: 3;
@@ -20,26 +21,70 @@ const Push = styled.div`
 `;
 
 const Messages = styled.div`
-  width: 100%;
-  font-size: 20px;
+  width: 85%;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #000;
   padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid black;
   @media screen and (max-width: 1279px) {
     font-size: 16px;
     letter-spacing: 5px;
   }
 `;
 
-function Notification({ switchSidebar, notice }) {
+const MsgAlert = styled.div`
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+`;
+
+const MsgWrapper = styled(Link)`
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid black;
+  text-decoration: none;
+`;
+
+function Notification({ switchSidebar, notice, setNotice }) {
+  const fakeNotice = [
+    {
+      id: 10256,
+      name: "test100",
+      status: 1,
+      url: "test.m3u8",
+      read: 0,
+    },
+    {
+      id: 10257,
+      name: "test200",
+      status: 1,
+      url: "test.m3u8",
+      read: 1,
+    },
+    {
+      id: 10258,
+      name: "test300",
+      status: 1,
+      url: "test.m3u8",
+      read: 0,
+    },
+  ];
   return (
     <Push display={switchSidebar["notification"]}>
-      {/* {notice &&
+      {notice &&
         notice.map((msg) => {
-          return <Messages>test</Messages>;
-        })} */}
+          return (
+            <MsgWrapper to={`/profile/${msg.id}`} id={`msg_${msg.id}`}>
+              <Messages>{msg.name}開始直播了！</Messages>
+              {/* {!msg.read && <MsgAlert />} */}
+            </MsgWrapper>
+          );
+        })}
     </Push>
   );
 }
