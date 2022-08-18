@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import ReactHlsPlayer from 'react-hls-player';
-import React from 'react';
+import { useState } from "react";
+import styled from "styled-components";
+import ReactHlsPlayer from "react-hls-player";
+import React from "react";
 
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝影片區＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
@@ -73,7 +73,11 @@ const VideoName = styled.div`
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝影片區＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
 const VideoLoad = (props) => {
-  const [hlsUrl, setHlsUrl] = useState('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+  let url =
+    props.videoUrl || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+  const [hlsUrl, setHlsUrl] = useState(
+    "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+  );
 
   return (
     <div>
@@ -88,10 +92,16 @@ const VideoLoad = (props) => {
           </StopVideoOutside>
           <StopVideoWord>離開</StopVideoWord>
         </StopVideoRange>
-        <ReactHlsPlayer src={hlsUrl} autoPlay={true} controls={true} width="100%" height="auto" />
+        <ReactHlsPlayer
+          src={hlsUrl}
+          autoPlay={true}
+          controls={true}
+          width="100%"
+          height="auto"
+        />
         <VideoInput>
           <VideoName>
-            告五人的直播頁面
+            {props.name}的直播頁面
             <VideoLive />
           </VideoName>
         </VideoInput>

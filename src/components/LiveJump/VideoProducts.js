@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import VideoVariants from './VideoVariants';
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import VideoVariants from "./VideoVariants";
 
 // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝選購清單＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
@@ -162,7 +162,7 @@ const ProductDetailContent = styled.div`
 
 const VideoProducts = () => {
   //================關閉或開啟商品細部項目================
-  const [closeProduct, setCloseProduct] = useState('none');
+  const [closeProduct, setCloseProduct] = useState("none");
 
   const ProductDetailRange = styled.div`
     background-color: #fff5ee;
@@ -172,22 +172,23 @@ const VideoProducts = () => {
   `;
 
   function closeProductDetail() {
-    setCloseProduct('none');
+    setCloseProduct("none");
   }
 
   function openProductDetail() {
-    setCloseProduct('block');
+    setCloseProduct("block");
   }
 
   //================抓取直播主選的要推廣商品================
   const [product, setProduct] = useState();
 
   useEffect(() => {
-    fetch('https://api.appworks-school.tw/api/1.0/products/women')
+    fetch("https://api.appworks-school.tw/api/1.0/products/women")
       .then((res) => res.json())
       .then(
         (result) => {
           setProduct(result.data);
+          console.log(result.data);
         },
         (error) => {
           console.log(error);
@@ -198,39 +199,39 @@ const VideoProducts = () => {
   if (!product) return null;
 
   return (
-    <div>
-      <Introduce>
-        {product.map((product) => (
-          <IntroduceProductOutside>
-            <IntroduceProduct>
-              <ProductPictureOutside>
-                <ProductPicture src={product.main_image} />
-              </ProductPictureOutside>
-              <ProductName>{product.title}</ProductName>
-              <ProductPrice>TWD.{product.price}</ProductPrice>
-              <ProductAdd onClick={openProductDetail}>➕加入購物車</ProductAdd>
-            </IntroduceProduct>
-            <ProductDetailRange>
-              <ProductDetail>
-                <StopProductDetailOutsideRange>
-                  <StopProductDetailOutside>
-                    <StopProductDetail onClick={closeProductDetail}>X</StopProductDetail>
-                  </StopProductDetailOutside>
-                </StopProductDetailOutsideRange>
-                <ProductPics>
-                  <ProductPicOneOutside>
-                    <ProductPicOne src={product.main_image} />
-                  </ProductPicOneOutside>
-                </ProductPics>
-                <ProductDetailContent>
-                  <VideoVariants product={product} />
-                </ProductDetailContent>
-              </ProductDetail>
-            </ProductDetailRange>
-          </IntroduceProductOutside>
-        ))}
-      </Introduce>
-    </div>
+    <Introduce>
+      {product.map((product) => (
+        <IntroduceProductOutside key={product.id}>
+          <IntroduceProduct>
+            <ProductPictureOutside>
+              <ProductPicture src={product.main_image} />
+            </ProductPictureOutside>
+            <ProductName>{product.title}</ProductName>
+            <ProductPrice>TWD.{product.price}</ProductPrice>
+            <ProductAdd onClick={openProductDetail}>➕加入購物車</ProductAdd>
+          </IntroduceProduct>
+          <ProductDetailRange>
+            <ProductDetail>
+              <StopProductDetailOutsideRange>
+                <StopProductDetailOutside>
+                  <StopProductDetail onClick={closeProductDetail}>
+                    X
+                  </StopProductDetail>
+                </StopProductDetailOutside>
+              </StopProductDetailOutsideRange>
+              <ProductPics>
+                <ProductPicOneOutside>
+                  <ProductPicOne src={product.main_image} />
+                </ProductPicOneOutside>
+              </ProductPics>
+              <ProductDetailContent>
+                <VideoVariants product={product} />
+              </ProductDetailContent>
+            </ProductDetail>
+          </ProductDetailRange>
+        </IntroduceProductOutside>
+      ))}
+    </Introduce>
   );
 };
 

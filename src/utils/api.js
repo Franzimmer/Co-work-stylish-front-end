@@ -62,6 +62,33 @@ const api = {
     const response = await fetch(`${this.hostname1}/user/${id}/info`);
     return await response.json();
   },
+  async getFollowStatus(id, token) {
+    const response = await fetch(`${this.hostname1}/user/${id}/followStatus`, {
+      headers: new Headers({
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+    return await response.json();
+  },
+  async getGameStatus(id, token) {
+    const response = await fetch(`${this.hostname1}/user/${id}/game`, {
+      headers: new Headers({
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+    return await response.json();
+  },
+  //格式
+  async updateGameStatus(id, token) {
+    const response = await fetch(`${this.hostname1}/user/${id}/game`, {
+      body: JSON.stringify({ progress: 1 }),
+      headers: new Headers({
+        Authorization: `Bearer ${token}`,
+      }),
+      method: "POST",
+    });
+    return await response.json();
+  },
 };
 
 export default api;

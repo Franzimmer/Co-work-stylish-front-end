@@ -84,7 +84,7 @@ function App() {
     notification: "none",
   });
   const [followList, setFollowList] = useState();
-  const [notice, setNotice] = useState([]); //??
+  const [notice, setNotice] = useState([]);
   const [showMask, setShowMask] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(
     Boolean(window.localStorage.getItem("jwtToken"))
@@ -150,7 +150,11 @@ function App() {
         <FollowList switchSidebar={switchSidebar} followList={followList} />
       )}
       {isLoggedIn && (
-        <Notification switchSidebar={switchSidebar} notice={notice} />
+        <Notification
+          switchSidebar={switchSidebar}
+          notice={notice}
+          setNotice={setNotice}
+        />
       )}
       <Outlet
         context={[
@@ -160,6 +164,7 @@ function App() {
           ws,
           setWs,
           setFollowList,
+          notice,
           setNotice,
         ]}
       />
