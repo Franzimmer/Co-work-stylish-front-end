@@ -7,7 +7,6 @@ const LiveStreamingAlertWrapper = styled.div`
   width: 50vw;
   height: auto;
   align-self: center;
-  margin-top: 100px;
   position: fixed;
   z-index: 101;
   background-color: #fff;
@@ -109,7 +108,7 @@ const LiveStreamingSearchResultImage = styled.div`
   background-image: url(${(props) => props.path});
   background-size: contain;
   background-repeat: no-repeat;
-  margin: 0px 0px 10px 0px;
+  margin: 0px 10px 10px 0px;
 `;
 const LiveStreamingSearchResultAddBtn = styled.div`
   border-radius: 50%;
@@ -210,7 +209,6 @@ function LiveStreamingAlert({
     liveStreamProductList.forEach((item) => {
       data.push(item.id);
     });
-    console.log(data);
     openLive(data);
   }
 
@@ -298,8 +296,9 @@ function LiveStreamingAlert({
       {step === 2 ? (
         <>
           <AlertTitle>最後一步！</AlertTitle>
+
           <AlertDesc>
-            在串流軟體上開啟直播後，在回來按下按鈕，我們會為你通知你的粉絲你的直播已開始！
+            在串流軟體上開啟直播後，再回來按下按鈕，我們會為你通知粉絲們你已開始直播！
           </AlertDesc>
           <LiveStreamingSendBtn
             onClick={() => {

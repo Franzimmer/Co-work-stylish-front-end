@@ -7,9 +7,7 @@ import LiveStreamingAlert from "./LiveStreamingAlert";
 import io from "socket.io-client";
 import api from "../../utils/api";
 import personhead from "./personhead.png";
-//上傳影片Reels
 import axios from "axios";
-//直播畫面
 import { MemoVideoLoad } from "../../components/LiveJump/VideoLoad";
 import VideoProducts from "../../components/LiveJump//VideoProducts";
 import Game from "./Game/Game";
@@ -368,6 +366,7 @@ function Profile() {
     setShowMask,
     ws,
     setWs,
+    followList,
     setFollowList,
     notice,
     setNotice,
@@ -387,7 +386,6 @@ function Profile() {
   const [liveKey, setLiveKey] = useState();
   const [url, setUrl] = useState();
   const [gameProgress, setGameProgress] = useState();
-  // const fakeGameProgress = [0, 0, 1, 1, 1, 1, 1];
   const [today, setToday] = useState();
   //Reels
   const [Reels, setReels] = useState([]);
@@ -435,6 +433,8 @@ function Profile() {
     });
     live.emit("liveInfo", { status: 1, products: data });
     live.on("disconnect");
+    let currentProfile = { ...profile, liveStatus: 1 };
+    setProfile(currentProfile);
   };
   const authLive = () => {
     const live = io("https://www.domingoos.store/influencer", {
@@ -460,8 +460,6 @@ function Profile() {
       }
     });
     live.on("disconnect");
-    let profileData = { ...profile, liveStatus: 1 };
-    setProfile(profileData);
   };
   const closeLive = () => {
     const live = io("https://www.domingoos.store/influencer", {
@@ -470,7 +468,6 @@ function Profile() {
         jwtToken: localStorage.getItem("jwtToken"),
       },
     });
-
     live.once("status", (res) => {
       if (res === "200") {
         live.emit("liveInfo", { status: 0 });
@@ -543,9 +540,22 @@ function Profile() {
         }
       });
       ws.on("live", (data) => {
+        console.log(data);
         let currentNotice = [...notice];
-        let newNotice = currentNotice.concat({ ...data, read: 0 });
-        setNotice(newNotice);
+        if (!data.status) {
+          let newNotice = currentNotice.concat({ ...data, read: 0 });
+          setNotice(newNotice);
+          console.log(newNotice);
+        }
+        let newFollowStatus = data;
+        let currentFollowList = [...followList];
+        let removeStatus = currentFollowList.find(
+          (person, index) => data.id === person.id
+        );
+        let removeStatusId = currentFollowList.indexOf(removeStatus);
+        currentFollowList[removeStatusId] = newFollowStatus;
+        console.log(currentFollowList);
+        setFollowList(currentFollowList);
       });
     }
   }, [ws]);
@@ -622,7 +632,7 @@ function Profile() {
     } else if (Number(paramId) === userId) {
       return (
         <>
-          {profile.role_id[0] === 3 && profile.liveStatus === 0 && (
+          {profile.role_id[0] === 3 && !profile.liveStatus && (
             <LiveButton
               onClick={() => {
                 authLive();
@@ -804,13 +814,25 @@ function Profile() {
               </>
             )}
           </Tabs>
-          {tabSelected.task && author === 1 && gameProgress[today] === 0 ? (
+          {gameProgress &&
+          tabSelected.task &&
+          author === 1 &&
+          gameProgress[today] === 0 ? (
             <GameWrapper>
-              <Game />
+              <Game
+                setGameProgress={setGameProgress}
+                userId={userId}
+                jwtToken={jwtToken}
+                setShowMask={setShowMask}
+              />
             </GameWrapper>
-          ) : tabSelected.task && author === 1 && gameProgress[today] === 1 ? (
-            <GameCompleted>今日任務已完成</GameCompleted>
-          ) : tabSelected.reels || tabCustomSelected.reels ? (
+          ) : gameProgress &&
+            tabSelected.task &&
+            author === 1 &&
+            gameProgress[today] === 1 ? (
+            <GameCompleted>已完成今日任務</GameCompleted>
+          ) : (author === 1 && tabSelected.reels) ||
+            (author !== 1 && tabCustomSelected.reels) ? (
             <ReelsPanel>
               <ReelsLeft onClick={ReelPageReduce}>
                 <FontAwesomeIcon icon={faAngleLeft} />
@@ -832,8 +854,9 @@ function Profile() {
                 <FontAwesomeIcon icon={faAngleRight} />
               </ReelsRight>
             </ReelsPanel>
-          ) : tabSelected.WishList || tabCustomSelected.WishList ? (
-            <WishList />
+          ) : (author === 1 && tabSelected.wishList) ||
+            tabCustomSelected.wishList ? (
+            <WishList></WishList>
           ) : null}
         </UserMainColumn>
       </Wrapper>

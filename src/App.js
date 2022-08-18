@@ -163,6 +163,7 @@ function App() {
           setShowMask,
           ws,
           setWs,
+          followList,
           setFollowList,
           notice,
           setNotice,
