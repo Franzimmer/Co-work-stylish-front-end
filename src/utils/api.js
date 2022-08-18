@@ -69,6 +69,7 @@ const api = {
       headers: new Headers({
         Authorization: `Bearer ${token}`,
       }),
+      method: 'GET',
     });
     return await response.json();
   },
@@ -78,7 +79,7 @@ const api = {
       headers: new Headers({
         Authorization: `Bearer ${token}`,
       }),
-      method: "POST",
+      method: 'POST',
     });
     return await response.json();
   },

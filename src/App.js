@@ -99,7 +99,7 @@ function App() {
     followList: 'none',
     notification: 'none',
   });
-  const [followList, setFollowList] = useState();
+  const [followList, setFollowList] = useState([]);
   const [notice, setNotice] = useState([]);
   const [showMask, setShowMask] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(window.localStorage.getItem('jwtToken')));
@@ -165,7 +165,9 @@ function App() {
         </video>
         煙火影片
       </Celebrate> */}
-      <Outlet context={[isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, setFollowList, notice, setNotice]} />
+      <Outlet
+        context={{ isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, followList, setFollowList, notice, setNotice }}
+      />
       <Footer />
     </CartContext.Provider>
   );

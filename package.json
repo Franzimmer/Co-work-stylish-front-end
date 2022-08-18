@@ -13,6 +13,7 @@
     "framer-motion": "^7.2.0",
     "gh-pages": "^4.0.0",
     "react": "^18.1.0",
+    "react-audio-player": "^0.17.0",
     "react-confetti-explosion": "^1.0.3",
     "react-dom": "^18.1.0",
     "react-hls-player": "^3.0.7",

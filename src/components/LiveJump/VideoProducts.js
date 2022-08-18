@@ -197,8 +197,11 @@ const VideoProducts = () => {
     getVideoProducts();
   }, []);
 
+  // https://www.domingoos.store/api/1.0/user/${paramId}/live-products
+
+  // https://www.domingoos.store/api/1.0/products/all
   function getVideoProducts() {
-    fetch(`https://www.domingoos.store/api/1.0/user/${paramId}/live-products`)
+    fetch('https://api.appworks-school.tw/api/1.0/products/women')
       .then((res) => res.json())
       .then((data) => {
         setProduct(data.data);

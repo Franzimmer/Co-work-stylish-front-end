@@ -365,7 +365,7 @@ function Profile() {
   const [profile, setProfile] = useState();
   let navigate = useNavigate();
 
-  const [isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, followList, setFollowList, notice, setNotice] =
+  const { isLoggedIn, setIsLoggedIn, setShowMask, ws, setWs, followList, setFollowList, notice, setNotice } =
     useOutletContext();
 
   const [isLiveStreamingOn, setIsLiveStreamingOn] = useState(false);
@@ -429,20 +429,20 @@ function Profile() {
   };
   const openLive = (data) => {
     const live = io('https://www.domingoos.store/influencer', {
-      query: { live_setting: 1 },
+      query: { live_setting: 1, key: false },
       extraHeaders: {
         jwtToken: localStorage.getItem('jwtToken'),
       },
     });
 
-    live.emit('liveInfo', { status: 1, products: data });
+    live.emit('liveInfo', { status: 1, products: data, secret: liveKey });
     live.on('disconnect');
     let currentProfile = { ...profile, liveStatus: 1 };
     setProfile(currentProfile);
   };
   const authLive = () => {
     const live = io('https://www.domingoos.store/influencer', {
-      query: { live_setting: 1 },
+      query: { live_setting: 1, key: true },
       extraHeaders: {
         jwtToken: localStorage.getItem('jwtToken'),
       },
@@ -451,6 +451,7 @@ function Profile() {
       if (data.status == 200) {
         live.on('key', (data) => {
           if (data.status == 200) {
+            console.log(data.key);
             setLiveKey(data.key);
             setUrl(data.url);
             setShowLiveAlert(true);
@@ -473,15 +474,13 @@ function Profile() {
         jwtToken: localStorage.getItem('jwtToken'),
       },
     });
-
-    live.once('status', (res) => {
-      if (res === '200') {
-        live.emit('liveInfo', { status: 0 });
-      }
+    live.on('status', (msg) => {
+      console.log(msg);
+      if (msg.status != 200) alert('直播關閉失敗');
     });
     live.on('disconnect');
-    let profileData = { ...profile, liveStatus: 0 };
-    setProfile(profileData);
+    // let profileData = { ...profile, liveStatus: 0 };
+    // setProfile(profileData);
   };
   const updateFollowList = () => {
     const data = {
@@ -537,13 +536,13 @@ function Profile() {
     if (ws) {
       ws.on('followList', (data) => {
         if (data.status === 200) {
+          console.log(data.followList);
           setFollowList(data.followList);
         }
       });
 
       ws.on('live', (data) => {
         console.log(data);
-
         let currentNotice = [...notice];
         if (!data.status) {
           let newNotice = currentNotice.concat({ ...data, read: 0 });
@@ -566,6 +565,7 @@ function Profile() {
   const jwtToken = localStorage.getItem('jwtToken');
 
   const inputRef = useRef();
+  const wsRef = useRef();
   async function uploadVideo() {
     const video = inputRef.current.files[0];
     let formData = new FormData();
@@ -839,7 +839,7 @@ function Profile() {
           {tabSelected.task && author === 1 && gameProgress && gameProgress[today] === 0 ? (
             <>
               <GameWrapper>
-                <Game />
+                <Game setGameProgress={setGameProgress} userId={userId} jwtToken={jwtToken} setShowMask={setShowMask} />
               </GameWrapper>
               <MonsterOutside>
                 <MonsterTitle> 玩遊戲即可獲得小驚喜喔～</MonsterTitle>

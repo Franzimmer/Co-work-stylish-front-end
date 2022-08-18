@@ -1,7 +1,7 @@
-import { useState } from "react";
-import styled from "styled-components";
-import search from "./search.png";
-import api from "../../utils/api";
+import { useState } from 'react';
+import styled from 'styled-components';
+import search from './search.png';
+import api from '../../utils/api';
 
 const LiveStreamingAlertWrapper = styled.div`
   width: 50vw;
@@ -175,15 +175,8 @@ const LiveStreamInfo = styled.p`
   margin: 50px 0px;
 `;
 
-function LiveStreamingAlert({
-  setShowLiveAlert,
-  setIsLiveStreamingOn,
-  setShowMask,
-  openLive,
-  liveKey,
-  url,
-}) {
-  const [inputValue, setInputValue] = useState("");
+function LiveStreamingAlert({ setShowLiveAlert, setIsLiveStreamingOn, setShowMask, openLive, liveKey, url }) {
+  const [inputValue, setInputValue] = useState('');
   const [searchResults, setSearchResults] = useState();
   const [liveStreamProductList, setLiveStreamProductList] = useState([]);
   const [liveStreamProductIdList, setLiveStreamProductIdList] = useState([]);
@@ -194,9 +187,7 @@ function LiveStreamingAlert({
   }
   function addLiveStreamProductList(e) {
     let productId = e.parentNode.id;
-    let product = searchResults.find(
-      (result) => result.id === Number(productId)
-    );
+    let product = searchResults.find((result) => result.id === Number(productId));
     let currentList = [...liveStreamProductList];
     let currentIdList = [...liveStreamProductIdList];
     let productListItem = { id: product.id, name: product.title };
@@ -211,7 +202,7 @@ function LiveStreamingAlert({
     });
     openLive(data);
   }
-
+  console.log(liveKey);
   return (
     <LiveStreamingAlertWrapper>
       <AlertCloseBtn
@@ -237,7 +228,7 @@ function LiveStreamingAlert({
           <LiveStreamingSearchInput
             placeholder="輸入商品名稱"
             onKeyPress={(e) => {
-              if (e.key === "Enter" && e.target.value) {
+              if (e.key === 'Enter' && e.target.value) {
                 searchLiveStreamProduct();
               }
             }}
@@ -247,47 +238,31 @@ function LiveStreamingAlert({
           <LiveStreamingSearchResults>
             {searchResults ? (
               <>
-                <LiveStreamingSearchResultsCloseBtn
-                  onClick={() => setSearchResults()}
-                >
+                <LiveStreamingSearchResultsCloseBtn onClick={() => setSearchResults()}>
                   X
                 </LiveStreamingSearchResultsCloseBtn>
                 {searchResults &&
                   searchResults.map((result) => (
                     <LiveStreamingSearchResult key={result.id} id={result.id}>
-                      <LiveStreamingSearchResultImage
-                        path={result.main_image}
-                      />
+                      <LiveStreamingSearchResultImage path={result.main_image} />
                       <LiveStreamingSearchResultInfo>
-                        <LiveStreamingSearchResultText>
-                          {result.title}
-                        </LiveStreamingSearchResultText>
-                        <LiveStreamingSearchResultText>
-                          {result.id}
-                        </LiveStreamingSearchResultText>
+                        <LiveStreamingSearchResultText>{result.title}</LiveStreamingSearchResultText>
+                        <LiveStreamingSearchResultText>{result.id}</LiveStreamingSearchResultText>
                       </LiveStreamingSearchResultInfo>
-                      <LiveStreamingSearchResultAddBtn
-                        onClick={(e) => addLiveStreamProductList(e.target)}
-                      >
+                      <LiveStreamingSearchResultAddBtn onClick={(e) => addLiveStreamProductList(e.target)}>
                         +
                       </LiveStreamingSearchResultAddBtn>
                     </LiveStreamingSearchResult>
                   ))}
               </>
             ) : (
-              <LiveStreamingSearchReminder>
-                請搜尋商品來加入清單
-              </LiveStreamingSearchReminder>
+              <LiveStreamingSearchReminder>請搜尋商品來加入清單</LiveStreamingSearchReminder>
             )}
           </LiveStreamingSearchResults>
           <LiveStreamingProductList>
             <LiveStreamingListTitle>介紹商品清單</LiveStreamingListTitle>
             {liveStreamProductList.map((item) => {
-              return (
-                <LiveStreamingProduct key={item.id}>
-                  {item.name}
-                </LiveStreamingProduct>
-              );
+              return <LiveStreamingProduct key={item.id}>{item.name}</LiveStreamingProduct>;
             })}
           </LiveStreamingProductList>
           <NextStepBtn onClick={() => setStep(2)}>下一步</NextStepBtn>
@@ -297,9 +272,7 @@ function LiveStreamingAlert({
         <>
           <AlertTitle>最後一步！</AlertTitle>
 
-          <AlertDesc>
-            在串流軟體上開啟直播後，再回來按下按鈕，我們會為你通知粉絲們你已開始直播！
-          </AlertDesc>
+          <AlertDesc>在串流軟體上開啟直播後，再回來按下按鈕，我們會為你通知粉絲們你已開始直播！</AlertDesc>
           <LiveStreamingSendBtn
             onClick={() => {
               setIsLiveStreamingOn(true);
